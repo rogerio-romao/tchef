@@ -35,5 +35,19 @@
     },
     "dependencies": {
         "consola": "^3.2.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rogerio-romao/tchef"
+    },
+    "keywords": [
+        "fetch",
+        "http",
+        "request",
+        "response",
+        "tchef"
+    ],
+    "engines": {
+        "node": ">=21.0.0"
     }
 }
