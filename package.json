@@ -1,7 +1,7 @@
 {
-    "name": "typescript-backend-starter",
-    "version": "1.0.0",
-    "description": "Starter config and linting for typescript backend",
+    "name": "tchef",
+    "version": "0.0.1",
+    "description": "A better Fetch - with bells and whistles",
     "main": "index.js",
     "type": "module",
     "scripts": {
