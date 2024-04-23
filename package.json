@@ -1,0 +1,39 @@
+{
+    "name": "typescript-backend-starter",
+    "version": "1.0.0",
+    "description": "Starter config and linting for typescript backend",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "lint": "eslint --ext .ts src",
+        "lint:fix": "eslint --fix --ext .ts src",
+        "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap",
+        "test": "vitest",
+        "test:ci": "vitest --run",
+        "start": "node dist/index.js",
+        "dev:tsc": "tsc --watch --preserveWatchOutput --noEmit",
+        "dev:node": "node --watch dist/index.js",
+        "dev:esbuild": "pnpm run build --watch",
+        "dev": "run-p dev:*"
+    },
+    "author": "Rogerio Romao",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^20.12.7",
+        "@typescript-eslint/eslint-plugin": "^7.0.0",
+        "@typescript-eslint/parser": "^7.0.0",
+        "esbuild": "^0.20.1",
+        "eslint": "^8.56.0",
+        "eslint-plugin-eslint-comments": "^3.2.0",
+        "eslint-plugin-import": "^2.29.1",
+        "eslint-plugin-promise": "^6.1.1",
+        "eslint-plugin-sonarjs": "^0.25.0",
+        "eslint-plugin-unicorn": "^52.0.0",
+        "npm-run-all2": "^6.1.2",
+        "typescript": "^5.3.3",
+        "vitest": "^1.3.0"
+    },
+    "dependencies": {
+        "consola": "^3.2.3"
+    }
+}

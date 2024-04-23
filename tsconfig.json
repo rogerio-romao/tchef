@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        /* Base Options: */
+        "esModuleInterop": true, // smooths out differences between CommonJS and ES Modules
+        "skipLibCheck": true, // skips checking of all declaration files (*.d.ts) (node_modules wont be checked)
+        "target": "es2022", // most browsers will support
+        "verbatimModuleSyntax": true, // ensure use of right syntax for import/export
+        "allowJs": true, // allow JavaScript files to be imported
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true, // allow JSON files to be imported
+        "moduleDetection": "force", // force TypeScript to use the module specified in tsconfig.json
+        /* Strictness */
+        "strict": true, // enables all strict type checking options
+        "noUncheckedIndexedAccess": true, // disallows unchecked indexed access to objects and arrays
+        /* If transpiling with TypeScript: */
+        "moduleResolution": "Bundler", // ensures TypeScript output can be consumed by Node.js, change this to Bundler if using a bundler, Deno, Bun, tsx, next, remix, svelte, etc.
+        "module": "ESNext", // ensures TypeScript output can be consumed by Node.js, change this to ESNext if using a bundler, Deno, Bun, tsx, next, remix, svelte, etc.
+        "noEmit": true, // if you're using a bundler, set this to true
+        "lib": ["es2022"], // if running on dom use ["es2022", "dom", "dom.iterable"]
+        "outDir": "./dist" // if you're using a bundler, set this to the output directory of your bundler
+    }
+}
