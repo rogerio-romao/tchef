@@ -1,6 +1,6 @@
 {
     "name": "tchef",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "A better Fetch - with bells and whistles",
     "main": "index.js",
     "type": "module",
