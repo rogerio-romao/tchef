@@ -1,6 +1,75 @@
 import { expect, test } from 'vitest';
-import sum from '../index.ts';
+import tchef from '../index.ts';
 
-test('adds 1 + 2 to equal 3', () => {
-    expect(sum(1, 2)).toBe(3);
+test('does a basic fetch', async () => {
+    expect(await tchef('https://jsonplaceholder.typicode.com/todos/1'))
+        .toMatchInlineSnapshot(`
+        {
+          "completed": false,
+          "id": 1,
+          "title": "delectus aut autem",
+          "userId": 1,
+        }
+    `);
+});
+
+test('does not crash on invalid url', async () => {
+    expect(
+        await tchef('https://jsonplaceholder.typicode.com/thisisfake')
+    ).toStrictEqual({ error: 'Not Found' });
+});
+
+test('can execute a POST request', async () => {
+    expect(
+        await tchef('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: 'foo',
+                body: 'bar',
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+    ).toMatchInlineSnapshot(`
+        {
+          "body": "bar",
+          "id": 101,
+          "title": "foo",
+          "userId": 1,
+        }
+    `);
+});
+
+test('can execute a PUT request', async () => {
+    expect(
+        await tchef('https://jsonplaceholder.typicode.com/posts/1', {
+            method: 'PUT',
+            body: JSON.stringify({
+                id: 1,
+                title: 'foo',
+                body: 'bar',
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+    ).toMatchInlineSnapshot(`
+        {
+          "body": "bar",
+          "id": 1,
+          "title": "foo",
+          "userId": 1,
+        }
+    `);
+});
+
+test('can execute a DELETE request', async () => {
+    expect(
+        await tchef('https://jsonplaceholder.typicode.com/posts/1', {
+            method: 'DELETE',
+        })
+    ).toMatchInlineSnapshot(`{}`);
 });
