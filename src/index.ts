@@ -1,13 +1,31 @@
 // packages
 import { consola } from 'consola';
 
-export default function sum(a: number, b: number): number {
-    return a + b;
-}
+// types
+import type { TchefOptions } from './types';
 
-consola.info('Using consola 3.0.0');
-consola.start('Building project...');
-consola.warn('A new version of consola is available: 3.0.1');
-consola.success('Project built!');
-consola.error(new Error('This is an example error. Everything is fine!'));
-consola.box('I am a simple box');
+const defaultOptions: TchefOptions = {
+    method: 'GET',
+    headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+    },
+};
+
+export default async function tchef(
+    url: string,
+    options: TchefOptions = {}
+): Promise<unknown> {
+    const response = await fetch(url, {
+        ...defaultOptions,
+        ...options,
+    });
+
+    if (!response.ok) {
+        return { error: response.statusText };
+    }
+
+    const data = await response.json();
+    consola.info(data);
+
+    return data;
+}

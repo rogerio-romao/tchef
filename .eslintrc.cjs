@@ -308,7 +308,7 @@ module.exports = {
         'unicorn/prefer-type-error': 'error',
         'unicorn/require-array-join-separator': 'error',
         'unicorn/require-number-to-fixed-digits-argument': 'error',
-        'unicorn/template-indent': 'error',
+        'unicorn/template-indent': 'off',
         'unicorn/text-encoding-identifier-case': 'warn',
         'unicorn/throw-new-error': 'error',
         // Import rules
@@ -402,7 +402,7 @@ module.exports = {
             'warn',
             { assertionStyle: 'as', objectLiteralTypeAssertions: 'allow' },
         ],
-        '@typescript-eslint/consistent-type-definitions': ['warn', 'interface'],
+        '@typescript-eslint/consistent-type-definitions': 'off',
         '@typescript-eslint/consistent-type-exports': 'error',
         '@typescript-eslint/consistent-type-imports': 'error',
         '@typescript-eslint/explicit-module-boundary-types': [
@@ -462,7 +462,7 @@ module.exports = {
         '@typescript-eslint/prefer-nullish-coalescing': 'warn',
         '@typescript-eslint/prefer-optional-chain': 'warn',
         '@typescript-eslint/prefer-reduce-type-parameter': 'warn',
-        '@typescript-eslint/prefer-readonly-parameter-types': 'warn',
+        '@typescript-eslint/prefer-readonly-parameter-types': 'off',
         '@typescript-eslint/prefer-return-this-type': 'warn',
         '@typescript-eslint/prefer-string-starts-ends-with': 'warn',
         '@typescript-eslint/prefer-ts-expect-error': 'error',
