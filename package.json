@@ -8,6 +8,7 @@
         "lint": "eslint --ext .ts src",
         "lint:fix": "eslint --fix --ext .ts src",
         "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap",
+        "check": "run-s lint test:ci build",
         "bump": "npx changelogen@latest --bump",
         "test": "vitest",
         "test:ci": "vitest --run",

@@ -5,10 +5,10 @@ test('does a basic fetch', async () => {
     expect(await tchef('https://jsonplaceholder.typicode.com/todos/1'))
         .toMatchInlineSnapshot(`
         {
-            "completed": false,
-            "id": 1,
-            "title": "delectus aut autem",
-            "userId": 1,
+          "completed": false,
+          "id": 1,
+          "title": "delectus aut autem",
+          "userId": 1,
         }
     `);
 });
@@ -34,10 +34,10 @@ test('can execute a POST request', async () => {
         })
     ).toMatchInlineSnapshot(`
         {
-            "body": "bar",
-            "id": 101,
-            "title": "foo",
-            "userId": 1,
+          "body": "bar",
+          "id": 101,
+          "title": "foo",
+          "userId": 1,
         }
     `);
 });
@@ -58,10 +58,10 @@ test('can execute a PUT request', async () => {
         })
     ).toMatchInlineSnapshot(`
         {
-            "body": "bar",
-            "id": 1,
-            "title": "foo",
-            "userId": 1,
+          "body": "bar",
+          "id": 1,
+          "title": "foo",
+          "userId": 1,
         }
     `);
 });
