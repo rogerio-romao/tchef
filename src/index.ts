@@ -2,7 +2,7 @@
 import { consola } from 'consola';
 
 // types
-import type { TchefOptions, TchefResponse } from './types';
+import type { TchefOptions } from './types';
 
 const defaultOptions: TchefOptions = {
     method: 'GET',
