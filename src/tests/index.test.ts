@@ -73,3 +73,9 @@ test('can execute a DELETE request', async () => {
         })
     ).toMatchInlineSnapshot(`{}`);
 });
+
+test('handles errors not caught by response.ok', () => {
+    expect(
+        async () => await tchef('http://unreachable-url')
+    ).not.toThrowError();
+});

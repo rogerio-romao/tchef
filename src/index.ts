@@ -15,17 +15,24 @@ export default async function tchef(
     url: string,
     options: TchefOptions = {}
 ): Promise<unknown> {
-    const response = await fetch(url, {
-        ...defaultOptions,
-        ...options,
-    });
+    try {
+        const response = await fetch(url, {
+            ...defaultOptions,
+            ...options,
+        });
 
-    if (!response.ok) {
-        return { error: response.statusText };
+        if (!response.ok) {
+            return { error: response.statusText };
+        }
+
+        const data = await response.json();
+        consola.info(data);
+
+        return data;
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Unknown Error' };
     }
-
-    const data = await response.json();
-    consola.info(data);
-
-    return data;
 }
