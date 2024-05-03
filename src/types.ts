@@ -9,3 +9,5 @@ export type TchefOptions = {
     body?: string;
     headers?: Record<string, string>;
 };
+
+export type TchefResult = { data: unknown } | { error: string };
