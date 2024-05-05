@@ -10,4 +10,6 @@ export type TchefOptions = {
     headers?: Record<string, string>;
 };
 
-export type TchefResult = { data: unknown } | { error: string };
+export type TchefResult =
+    | { data: unknown; ok: true }
+    | { error: string; ok: false };

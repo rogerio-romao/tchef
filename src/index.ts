@@ -2,7 +2,7 @@
 import { consola } from 'consola';
 
 // types
-import type { TchefOptions } from './types';
+import type { TchefOptions, TchefResult } from './types';
 
 const defaultOptions: TchefOptions = {
     method: 'GET',
@@ -14,7 +14,7 @@ const defaultOptions: TchefOptions = {
 export default async function tchef(
     url: string,
     options: TchefOptions = {}
-): Promise<unknown> {
+): Promise<TchefResult> {
     try {
         const response = await fetch(url, {
             ...defaultOptions,
@@ -22,17 +22,20 @@ export default async function tchef(
         });
 
         if (!response.ok) {
-            return { error: response.statusText };
+            return {
+                ok: false,
+                error: `${response.status} - ${response.statusText}`,
+            };
         }
 
         const data = await response.json();
         consola.info(data);
 
-        return data;
+        return { ok: true, data };
     } catch (error) {
         if (error instanceof Error) {
-            return { error: error.message };
+            return { ok: false, error: error.message };
         }
-        return { error: 'Unknown Error' };
+        return { ok: false, error: 'Network Error' };
     }
 }
