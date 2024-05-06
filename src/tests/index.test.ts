@@ -96,3 +96,40 @@ test('handles errors not caught by response.ok', () => {
         async () => await tchef('http://unreachable-url')
     ).not.toThrowError();
 });
+
+if (process.env.CI !== 'true') {
+    test('does not crash on receiving invalid JSON', async () => {
+        expect(await tchef('http://localhost:3000/malformed')).toStrictEqual({
+            ok: false,
+            error: 'Invalid JSON',
+        });
+    });
+}
+
+test('can receive a text response', async () => {
+    const result = await tchef('https://httpbin.org/robots.txt', {
+        responseFormat: 'text',
+    });
+
+    if (!result.ok) {
+        throw new Error(result.error);
+    }
+
+    expect(result.data).toMatchInlineSnapshot(`
+        "User-agent: *
+        Disallow: /deny
+        "
+    `);
+});
+
+test('can receive a blob response', async () => {
+    const result = await tchef('https://httpbin.org/image/jpeg', {
+        responseFormat: 'blob',
+    });
+
+    if (!result.ok) {
+        throw new Error(result.error);
+    }
+
+    expect(result.data).toBeInstanceOf(Blob);
+});
