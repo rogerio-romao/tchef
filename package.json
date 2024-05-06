@@ -9,9 +9,12 @@
         "lint:fix": "eslint --fix --ext .ts src",
         "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap",
         "check": "run-s lint test:ci build",
+        "serve": "json-server ./src/server/db.json --port 3000",
         "bump": "npx changelogen@latest --bump",
         "test": "vitest",
-        "test:ci": "vitest --run",
+        "coverage": "vitest run --coverage --ui",
+        "test:local": "run-p serve test",
+        "test:ci": "run-p serve test -- --run",
         "start": "node dist/index.js",
         "dev:tsc": "tsc --watch --preserveWatchOutput --noEmit",
         "dev:node": "node --watch dist/index.js",
@@ -24,6 +27,8 @@
         "@types/node": "^20.12.7",
         "@typescript-eslint/eslint-plugin": "^7.0.0",
         "@typescript-eslint/parser": "^7.0.0",
+        "@vitest/coverage-v8": "^1.6.0",
+        "@vitest/ui": "^1.6.0",
         "esbuild": "^0.20.1",
         "eslint": "^8.56.0",
         "eslint-plugin-eslint-comments": "^3.2.0",
@@ -36,7 +41,8 @@
         "vitest": "^1.3.0"
     },
     "dependencies": {
-        "consola": "^3.2.3"
+        "consola": "^3.2.3",
+        "json-server": "1.0.0-alpha.23"
     },
     "repository": {
         "type": "git",
