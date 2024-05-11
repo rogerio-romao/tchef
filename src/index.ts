@@ -2,7 +2,7 @@
 import { consola } from 'consola';
 
 // utils
-import deepMergeHeaders from './utils/deepMergeHeaders.ts';
+import generateHeaders from './utils/generateHeaders.ts';
 
 // types
 import type { TchefOptions, TchefResult } from './types';
@@ -10,16 +10,18 @@ import type { TchefOptions, TchefResult } from './types';
 const defaultOptions: TchefOptions = {
     method: 'GET',
     headers: {
-        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json',
     },
     responseFormat: 'json',
+    cacheType: 'private',
+    cacheMaxAge: 60,
 };
 
 export default async function tchef(
     url: string,
     options: TchefOptions = {}
 ): Promise<TchefResult> {
-    const headers = deepMergeHeaders(defaultOptions, options);
+    const headers = generateHeaders(defaultOptions, options);
 
     const mergedOptions = {
         ...defaultOptions,

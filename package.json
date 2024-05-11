@@ -12,7 +12,7 @@
         "serve": "json-server ./src/server/db.json --port 3000",
         "bump": "npx changelogen@latest --bump",
         "test": "vitest",
-        "coverage": "vitest run --coverage --ui",
+        "coverage": "vitest run --coverage",
         "test:local": "run-p serve test",
         "test:ci": "vitest --run",
         "start": "node dist/index.js",

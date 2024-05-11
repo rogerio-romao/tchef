@@ -11,6 +11,8 @@ export type TchefOptions = {
     body?: string;
     headers?: Record<string, string>;
     responseFormat?: ResponseFormat;
+    cacheType?: 'no-cache' | 'private' | 'public';
+    cacheMaxAge?: number;
 };
 
 export type TchefResult =
