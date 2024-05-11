@@ -48,11 +48,11 @@ export default function generateHeaders(
         }
     }
 
-    const headers = {
+    const headersObj = {
         ...src.headers,
         ...target.headers,
         ...conditionalHeaders,
     };
 
-    return headers;
+    return headersObj;
 }
