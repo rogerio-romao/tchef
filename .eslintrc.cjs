@@ -345,7 +345,7 @@ module.exports = {
         'eslint-comments/no-unused-enable': 'error',
         // SonarJS rules
         'sonarjs/no-all-duplicated-branches': 'error',
-        'sonarjs/elseif-without-else': 'warn',
+        'sonarjs/elseif-without-else': 'off',
         'sonarjs/max-switch-cases': ['warn', 16],
         'sonarjs/no-collection-size-mischeck': 'error',
         'sonarjs/no-duplicated-branches': 'error',
@@ -357,7 +357,7 @@ module.exports = {
         'sonarjs/no-identical-functions': 'error',
         'sonarjs/no-ignored-return': 'error',
         'sonarjs/no-inverted-boolean-check': 'warn',
-        'sonarjs/no-nested-switch': 'error',
+        'sonarjs/no-nested-switch': 'off',
         'sonarjs/no-nested-template-literals': 'warn',
         'sonarjs/no-redundant-boolean': 'warn',
         'sonarjs/no-small-switch': 'error',
