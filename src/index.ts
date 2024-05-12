@@ -1,8 +1,6 @@
-// packages
-import { consola } from 'consola';
-
 // utils
 import generateHeaders from './utils/generateHeaders.ts';
+import generateSearchParams from './utils/generateSearchParams.ts';
 
 // types
 import type { TchefOptions, TchefResult } from './types';
@@ -21,6 +19,14 @@ export default async function tchef(
     url: string,
     options: TchefOptions = {}
 ): Promise<TchefResult> {
+    const urlIsValid = URL.canParse(url);
+    if (!urlIsValid) {
+        return { ok: false, error: 'Invalid URL' };
+    }
+
+    const validUrl = new URL(url);
+    const urlWithParams = generateSearchParams(validUrl, options);
+
     const headers = generateHeaders(defaultOptions, options);
 
     const mergedOptions = {
@@ -29,10 +35,8 @@ export default async function tchef(
         headers,
     };
 
-    consola.info('mergedOptions:', mergedOptions);
-
     try {
-        const response = await fetch(url, {
+        const response = await fetch(urlWithParams, {
             ...mergedOptions,
         });
 
@@ -76,3 +80,5 @@ export default async function tchef(
         return { ok: false, error: 'Network Error' };
     }
 }
+
+await tchef('https://jsonplaceholder.typicode.com/posts/1?userId=1', {});

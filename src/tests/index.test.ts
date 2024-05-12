@@ -133,3 +133,10 @@ test('can receive a blob response', async () => {
 
     expect(result.data).toBeInstanceOf(Blob);
 });
+
+test('does not crash on invalid url', async () => {
+    expect(await tchef('gibberish')).toStrictEqual({
+        ok: false,
+        error: 'Invalid URL',
+    });
+});

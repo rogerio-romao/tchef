@@ -13,6 +13,7 @@ export type TchefOptions = {
     responseFormat?: ResponseFormat;
     cacheType?: 'no-cache' | 'private' | 'public';
     cacheMaxAge?: number;
+    searchParams?: Array<Record<string, string | number>>;
 };
 
 export type TchefResult =
