@@ -1,6 +1,3 @@
-// packages
-import { consola } from 'consola';
-
 // utils
 import generateHeaders from './utils/generateHeaders.ts';
 import generateSearchParams from './utils/generateSearchParams.ts';
