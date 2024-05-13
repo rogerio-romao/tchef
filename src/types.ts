@@ -14,6 +14,8 @@ export type TchefOptions = {
     cacheType?: 'no-cache' | 'private' | 'public';
     cacheMaxAge?: number;
     searchParams?: Array<Record<string, string | number>>;
+    timeout?: 'no-limit' | number;
+    signal?: AbortSignal;
 };
 
 export type TchefResult =

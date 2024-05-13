@@ -13,28 +13,37 @@ const defaultOptions: TchefOptions = {
     responseFormat: 'json',
     cacheType: 'private',
     cacheMaxAge: 60,
+    timeout: 'no-limit',
 };
 
 export default async function tchef(
     url: string,
     options: TchefOptions = {}
 ): Promise<TchefResult> {
+    // Check if the URL is valid
     const urlIsValid = URL.canParse(url);
     if (!urlIsValid) {
         return { ok: false, error: 'Invalid URL' };
     }
 
+    // Generate the URL with search params
     const validUrl = new URL(url);
     const urlWithParams = generateSearchParams(validUrl, options);
 
+    // Generate the headers
     const headers = generateHeaders(defaultOptions, options);
 
+    // Merge the default options with the user options and the headers
     const mergedOptions = {
         ...defaultOptions,
         ...options,
         headers,
+        ...(typeof options.timeout === 'number' && {
+            signal: AbortSignal.timeout(options.timeout * 1000),
+        }),
     };
 
+    // Make the request
     try {
         const response = await fetch(urlWithParams, {
             ...mergedOptions,
@@ -47,6 +56,7 @@ export default async function tchef(
             };
         }
 
+        // Parse the response
         try {
             switch (mergedOptions.responseFormat) {
                 case 'json':
@@ -62,6 +72,7 @@ export default async function tchef(
                     return { ok: false, error: 'Invalid response format' };
             }
         } catch (error) {
+            // Handle parsing errors
             switch (mergedOptions.responseFormat) {
                 case 'json':
                     return { ok: false, error: 'Invalid JSON' };
@@ -74,6 +85,14 @@ export default async function tchef(
             }
         }
     } catch (error) {
+        // Handle abort errors
+        if (error instanceof DOMException && error.name === 'AbortError') {
+            return { ok: false, error: 'Request aborted' };
+        }
+        if (error instanceof DOMException && error.name === 'TimeoutError') {
+            return { ok: false, error: 'Request timeout' };
+        }
+        // Handle network errors
         if (error instanceof Error) {
             return { ok: false, error: error.message };
         }

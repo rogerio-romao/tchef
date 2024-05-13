@@ -5,6 +5,9 @@
 _Warning: this is a heavily wip package that is in initial stages, and also my
 first ever package. Use it at your own risk._
 
+It's meant to work on Node and browsers, just assumes a fairly recent version,
+since it assumes that it has native Fetch implementation. Recommended Node >=21.
+
 ### Features
 
 ✔︎ **Result type returns.**
@@ -41,6 +44,12 @@ Currently supports options for `GET, POST, PUT, DELETE` methods; for creating
 and sending headers, for `json, text, blob` response type and parsing, for
 creating and sending search params, and for selecting different types of
 caching.
+
+✔︎ **Timeout & Abort.**
+
+You can set optional timeout in seconds (default no time limit, meaning it will
+be handled by the browser or runtime). You can also optionally create an
+AbortController and send its signal using the signal option.
 
 ROADMAP:
 
