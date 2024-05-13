@@ -42,6 +42,12 @@ and sending headers, for `json, text, blob` response type and parsing, for
 creating and sending search params, and for selecting different types of
 caching.
 
+✔︎ **Timeout & Abort.**
+
+You can set optional timeout in seconds (default no time limit, meaning it will
+be handled by the browser or runtime). You can also optionally create an
+AbortController and send its signal using the signal option.
+
 ROADMAP:
 
 -   retries

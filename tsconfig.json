@@ -17,7 +17,7 @@
         "module": "ESNext", // ensures TypeScript output can be consumed by Node.js, change this to ESNext if using a bundler, Deno, Bun, tsx, next, remix, svelte, etc.
         "declaration": true, // generates corresponding .d.ts file
         "emitDeclarationOnly": true,
-        "lib": ["es2022"], // if running on dom use ["es2022", "dom", "dom.iterable"]
+        "lib": ["es2022", "DOM"], // if running on dom use ["es2022", "dom", "dom.iterable"]
         "outDir": "./dist" // if you're using a bundler, set this to the output directory of your bundler
     }
 }
