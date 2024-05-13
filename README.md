@@ -5,6 +5,9 @@
 _Warning: this is a heavily wip package that is in initial stages, and also my
 first ever package. Use it at your own risk._
 
+It's meant to work on Node and browsers, just assumes a fairly recent version,
+since it assumes that it has native Fetch implementation. Recommended Node >=21.
+
 ### Features
 
 ✔︎ **Result type returns.**
