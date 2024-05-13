@@ -80,5 +80,3 @@ export default async function tchef(
         return { ok: false, error: 'Network Error' };
     }
 }
-
-await tchef('https://jsonplaceholder.typicode.com/posts/1?userId=1', {});
