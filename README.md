@@ -45,6 +45,23 @@ and sending headers, for `json, text, blob` response type and parsing, for
 creating and sending search params, and for selecting different types of
 caching.
 
+Default options:
+
+```js
+{
+    method: 'GET',
+    headers: {
+        Accept: 'application/json',
+    },
+    responseFormat: 'json',
+    cacheType: 'private',
+    cacheMaxAge: 60,
+    timeoutSecs: 'no-limit',
+    retries: 0,
+    retryDelayMs: 100,
+};
+```
+
 ✔︎ **Timeout & Abort.**
 
 You can set optional timeout in seconds (default no time limit, meaning it will
