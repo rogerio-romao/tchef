@@ -1,6 +1,6 @@
 # Tchef
 
-## A better Fetch (bells & whistles )
+## A better Fetch - with bells and whistles
 
 _Warning: this is a heavily wip package that is in initial stages, and also my
 first ever package. Use it at your own risk._
@@ -68,8 +68,17 @@ You can set optional timeout in seconds (default no time limit, meaning it will
 be handled by the browser or runtime). You can also optionally create an
 AbortController and send its signal using the signal option.
 
+✔︎ **Retries.**
+
+You can set a number of retries for the cases when the fetch fails. By default
+it is set to 0. You can also select the amount of delay time in miliseconds to
+wait between the retries, by default 100ms. You can also set this option to the
+value `'exponential'`, and the delay time will increase exponentially with each
+retry, starting at 1sec, then 2, 4 and so on, up to your amount of retries. The
+error that happened on the previous attempt gets forwarded to the next attempt,
+and will be returned on the last attempt.
+
 ROADMAP:
 
--   retries
 -   more robust caching features
 -   validation / type safety on responses
