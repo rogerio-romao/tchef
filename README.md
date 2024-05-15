@@ -16,7 +16,7 @@ If the fetch is successful, you get an object with
 
 ```ts
 {
-    ok: true, data: unknown;
+    ok: true, data: T = unknown;
 }
 ```
 
@@ -28,10 +28,11 @@ Otherwise, you get
 }
 ```
 
-So data will be whatever was the response when the call succeeded. If it didn't
-succeed, the error will be a string message with different messages depending on
-the type of the error - 404, malformed url, network error, error parsing the
-json, etc.
+So data will be whatever was the response when the call succeeded. A generic can
+be passed in to type the response data for you, otherwise default to unknown. If
+it didn't succeed, the error will be a string message with different messages
+depending on the type of the error - 404, malformed url, network error, error
+parsing the json, etc.
 
 That means calling Tchef should not need to be wrapped around a try-catch,
 instead it will always return and you only need to check for the ok property -
@@ -78,7 +79,33 @@ retry, starting at 1sec, then 2, 4 and so on, up to your amount of retries. The
 error that happened on the previous attempt gets forwarded to the next attempt,
 and will be returned on the last attempt.
 
+✔︎ **Generic typing.**
+
+A type can be passed in to Tchef, that will be used to type the returned data.
+This is not the same as validating that the data is actually the correct type,
+it is just doing a typecast, so you get autocomplete and errors on the IDE when
+trying to access properties on the type. It is essentially the same as doing
+this:
+
+```ts
+type something = { some: string; thing: string };
+const response = await fetch('https://some.website.com');
+if (!response.ok) {
+    // handle error
+}
+const data = (await response.json()) as something;
+```
+
+But since Tchef wraps around Fetch, we instead do that like this:
+
+```ts
+const response = await tchef<something>('https://some.website.com');
+```
+
+And the result is the same, the response is typed as `something`. If nothing is
+passed, the response will default to type `unknown`.
+
 ROADMAP:
 
--   more robust caching features
 -   validation / type safety on responses
+-   more robust caching features
