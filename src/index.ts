@@ -20,12 +20,20 @@ const defaultOptions: TchefOptions = {
     retryDelayMs: 100,
 };
 
-export default async function tchef(
+export default async function tchef<T = unknown>(
     url: string,
     options: TchefOptions = {},
     currentRetries = 0,
     transitiveErrorMessage = ''
-): Promise<TchefResult> {
+): Promise<TchefResult<T>> {
+    // Check if fetch is supported
+    if (typeof globalThis.fetch !== 'function') {
+        return {
+            ok: false,
+            error: 'Fetch not supported on current platform, use latest versions.',
+        };
+    }
+
     // Retries
     const hasRetries =
         typeof options.retries === 'number' && options.retries > 0;
@@ -103,14 +111,14 @@ export default async function tchef(
             try {
                 switch (mergedOptions.responseFormat) {
                     case 'json':
-                        const data = await response.json();
+                        const data = (await response.json()) as T;
                         return { ok: true, data };
                     case 'text':
                         const text = await response.text();
-                        return { ok: true, data: text };
+                        return { ok: true, data: text as unknown as T };
                     case 'blob':
                         const blob = await response.blob();
-                        return { ok: true, data: blob };
+                        return { ok: true, data: blob as unknown as T };
                     default:
                         return { ok: false, error: 'Invalid response format' };
                 }

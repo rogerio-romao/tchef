@@ -20,6 +20,6 @@ export type TchefOptions = {
     retryDelayMs?: number | 'exponential';
 };
 
-export type TchefResult =
-    | { data: unknown; ok: true }
+export type TchefResult<T> =
+    | { data: T; ok: true }
     | { error: string; ok: false };
