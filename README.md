@@ -14,17 +14,17 @@ since it assumes that it has native Fetch implementation. Recommended Node >=21.
 
 If the fetch is successful, you get an object with
 
-```js
+```ts
 {
-    ok: true, data;
+    ok: true, data: unknown;
 }
 ```
 
 Otherwise, you get
 
-```js
+```ts
 {
-    ok: false, error;
+    ok: false, error: string;
 }
 ```
 

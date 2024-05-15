@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import tchef from '../index.ts';
 
 const isCi = process.env.CI === 'true';
@@ -270,5 +270,56 @@ describe('Retry tests', () => {
             ok: false,
             error: 'Max retries reached. fetch failed',
         });
+    });
+});
+
+describe('Generic type tests', () => {
+    test('can type the response 1', async () => {
+        const result = await tchef<{ userId: number }>(
+            'https://jsonplaceholder.typicode.com/todos/1'
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data.userId).toBe(1);
+    });
+
+    test.skipIf(isCi)('can type the response 2', async () => {
+        type Comment = {
+            id: number;
+            body: string;
+            postId: number;
+        };
+
+        const result = await tchef<Comment>('http://localhost:3000/posts/1', {
+            method: 'GET',
+        });
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expectTypeOf(result.data).toEqualTypeOf<Comment>();
+    });
+
+    test('can type the response 3', async () => {
+        type Todo = {
+            userId: number;
+            id: number;
+            title: string;
+            completed: boolean;
+        };
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1'
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expectTypeOf(result.data).toEqualTypeOf<Todo>();
     });
 });
