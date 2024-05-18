@@ -1,3 +1,6 @@
+// packages
+import { safeParse } from 'valibot';
+
 // utils
 import generateHeaders from './utils/generateHeaders.ts';
 import generateSearchParams from './utils/generateSearchParams.ts';
@@ -6,19 +9,6 @@ import sleep from './utils/sleep.ts';
 
 // types
 import type { TchefOptions, TchefResult } from './types';
-
-const defaultOptions: TchefOptions = {
-    method: 'GET',
-    headers: {
-        Accept: 'application/json',
-    },
-    responseFormat: 'json',
-    cacheType: 'private',
-    cacheMaxAge: 60,
-    timeoutSecs: 'no-limit',
-    retries: 0,
-    retryDelayMs: 100,
-};
 
 export default async function tchef<T = unknown>(
     url: string,
@@ -33,6 +23,19 @@ export default async function tchef<T = unknown>(
             error: 'Fetch not supported on current platform, use latest versions.',
         };
     }
+
+    const defaultOptions: TchefOptions = {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+        },
+        responseFormat: 'json',
+        cacheType: 'private',
+        cacheMaxAge: 60,
+        timeoutSecs: 'no-limit',
+        retries: 0,
+        retryDelayMs: 100,
+    };
 
     // Retries
     const hasRetries =
@@ -69,7 +72,7 @@ export default async function tchef<T = unknown>(
         const headers = generateHeaders(defaultOptions, options);
 
         // Merge the default options with the user options and the headers
-        const mergedOptions = {
+        const mergedOptions: TchefOptions = {
             ...defaultOptions,
             ...options,
             headers,
@@ -111,6 +114,21 @@ export default async function tchef<T = unknown>(
             try {
                 switch (mergedOptions.responseFormat) {
                     case 'json':
+                        if (options.validateSchema !== undefined) {
+                            const result = safeParse(
+                                options.validateSchema,
+                                await response.json()
+                            );
+                            return !result.success
+                                ? {
+                                      ok: false,
+                                      error: 'Response failed to validate against schema.',
+                                  }
+                                : {
+                                      ok: true,
+                                      data: result.output as T,
+                                  };
+                        }
                         const data = (await response.json()) as T;
                         return { ok: true, data };
                     case 'text':

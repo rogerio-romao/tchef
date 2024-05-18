@@ -7,7 +7,7 @@
     "type": "module",
     "scripts": {
         "bump:patch": "npx changelogen@latest --bump --patch",
-        "bump:minor": "npx changelogen@latest --bump minor",
+        "bump:minor": "npx changelogen@latest --bump --minor",
         "bump:major": "npx changelogen@latest --bump --major",
         "build": "run-s build:node build:types",
         "build:node": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap --external:all",
@@ -34,6 +34,7 @@
         "@typescript-eslint/parser": "^7.0.0",
         "@vitest/coverage-v8": "^1.6.0",
         "@vitest/ui": "^1.6.0",
+        "consola": "^3.2.3",
         "esbuild": "^0.20.1",
         "eslint": "^8.56.0",
         "eslint-plugin-eslint-comments": "^3.2.0",
@@ -41,13 +42,14 @@
         "eslint-plugin-promise": "^6.1.1",
         "eslint-plugin-sonarjs": "^0.25.0",
         "eslint-plugin-unicorn": "^52.0.0",
+        "json-server": "1.0.0-alpha.23",
         "npm-run-all2": "^6.1.2",
         "typescript": "^5.3.3",
-        "vitest": "^1.3.0",
-        "json-server": "1.0.0-alpha.23",
-        "consola": "^3.2.3"
+        "vitest": "^1.3.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "valibot": "^0.30.0"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/rogerio-romao/tchef.git"
