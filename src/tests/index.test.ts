@@ -173,7 +173,7 @@ describe('Response type tests', () => {
 });
 
 describe('Timeout and abort tests', () => {
-    test('can handle a timeout', async () => {
+    test('times out correctly', async () => {
         expect(
             await tchef('https://httpbin.org/delay/2', {
                 timeoutSecs: 1,
@@ -329,7 +329,7 @@ describe('Generic type tests', () => {
     });
 });
 
-describe.only('Validation tests', () => {
+describe('Validation tests', () => {
     test('can validate the response', async () => {
         const TodoSchema = object({
             userId: number(),
