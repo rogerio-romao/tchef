@@ -1,3 +1,5 @@
+import type { BaseSchema } from 'valibot';
+
 export type TchefResponse = {
     error?: string;
 };
@@ -18,6 +20,7 @@ export type TchefOptions = {
     signal?: AbortSignal;
     retries?: number;
     retryDelayMs?: number | 'exponential';
+    validateSchema?: BaseSchema;
 };
 
 export type TchefResult<T> =

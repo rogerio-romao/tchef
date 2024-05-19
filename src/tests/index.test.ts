@@ -1,3 +1,14 @@
+import {
+    boolean,
+    never,
+    nullish,
+    number,
+    object,
+    optional,
+    string,
+    unknown,
+    type Output,
+} from 'valibot';
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import tchef from '../index.ts';
 
@@ -162,7 +173,7 @@ describe('Response type tests', () => {
 });
 
 describe('Timeout and abort tests', () => {
-    test('can handle a timeout', async () => {
+    test('times out correctly', async () => {
         expect(
             await tchef('https://httpbin.org/delay/2', {
                 timeoutSecs: 1,
@@ -315,5 +326,263 @@ describe('Generic type tests', () => {
         }
 
         expectTypeOf(result.data).toEqualTypeOf<unknown>();
+    });
+});
+
+describe('Validation tests', () => {
+    test('can validate the response', async () => {
+        const TodoSchema = object({
+            userId: number(),
+            id: number(),
+            title: string(),
+            completed: boolean(),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data).toMatchInlineSnapshot(`
+        {
+          "completed": false,
+          "id": 1,
+          "title": "delectus aut autem",
+          "userId": 1,
+        }
+    `);
+    });
+
+    test('can validate the response with error message when schema incorrect', async () => {
+        const TodoSchema = object({
+            userId: string(),
+            id: boolean(),
+            title: number(),
+            completed: string(),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            expect(result.error).toBe(
+                'Response failed to validate against schema.'
+            );
+        } else {
+            throw new Error('Should have failed validation');
+        }
+    });
+
+    test('response with more fields than schema still passes', async () => {
+        const TodoSchema = object({
+            userId: number(),
+            id: number(),
+            completed: boolean(),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data).toMatchInlineSnapshot(`
+        {
+          "completed": false,
+          "id": 1,
+          "userId": 1,
+        }
+    `);
+    });
+
+    test('response with less fields than schema fails', async () => {
+        const TodoSchema = object({
+            userId: number(),
+            id: number(),
+            title: string(),
+            completed: boolean(),
+            extraField: string(),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            expect(result.error).toBe(
+                'Response failed to validate against schema.'
+            );
+        } else {
+            throw new Error('Should have failed validation');
+        }
+    });
+
+    test('handles schemas with non-present nullish values', async () => {
+        const TodoSchema = object({
+            userId: number(),
+            id: number(),
+            title: string(),
+            completed: boolean(),
+            extraField: nullish(string()),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data).toMatchInlineSnapshot(`
+        {
+          "completed": false,
+          "id": 1,
+          "title": "delectus aut autem",
+          "userId": 1,
+        }
+    `);
+    });
+
+    // Skip this test in CI because it uses a local server
+    test.skipIf(isCi)(
+        'handles schemas with present nullish values',
+        async () => {
+            const TodoSchema = object({
+                id: number(),
+                title: string(),
+                author: string(),
+                comments: nullish(string()),
+            });
+
+            type Todo = Output<typeof TodoSchema>;
+
+            const result = await tchef<Todo>('http://localhost:3000/nullish', {
+                validateSchema: TodoSchema,
+            });
+
+            if (!result.ok) {
+                throw new Error(result.error);
+            }
+
+            expect(result.data.comments).toBe(null);
+        }
+    );
+
+    // Skip this test in CI because it uses a local server
+    test.skipIf(isCi)('handles schemas with optional fields', async () => {
+        const TodoSchema = object({
+            id: number(),
+            title: string(),
+            author: optional(string()),
+        });
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>('http://localhost:3000/optional', {
+            validateSchema: TodoSchema,
+        });
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data.author).toBe(undefined);
+        expect(result.data).toMatchInlineSnapshot(`
+        {
+          "id": 1,
+          "title": "foo",
+        }
+    `);
+    });
+
+    test('passing unknown to rest of schema includes all fields', async () => {
+        const TodoSchema = object(
+            {
+                id: number(),
+                title: string(),
+            },
+            unknown()
+        );
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data).toMatchInlineSnapshot(`
+        {
+          "completed": false,
+          "id": 1,
+          "title": "delectus aut autem",
+          "userId": 1,
+        }
+    `);
+    });
+
+    test('passing never to rest of schema rejects when there are more fields', async () => {
+        const TodoSchema = object(
+            {
+                id: number(),
+                title: string(),
+            },
+            never()
+        );
+
+        type Todo = Output<typeof TodoSchema>;
+
+        const result = await tchef<Todo>(
+            'https://jsonplaceholder.typicode.com/todos/1',
+            {
+                validateSchema: TodoSchema,
+            }
+        );
+
+        if (!result.ok) {
+            expect(result.error).toBe(
+                'Response failed to validate against schema.'
+            );
+        } else {
+            throw new Error('Should have failed validation');
+        }
     });
 });
