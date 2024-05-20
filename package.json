@@ -1,6 +1,6 @@
 {
     "name": "tchef",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "A better Fetch - with bells and whistles",
     "main": "dist/index.js",
     "types": "dist/src/index.d.ts",
@@ -60,6 +60,12 @@
         "request",
         "response",
         "tchef"
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://opensource.org/license/mit"
+        }
     ],
     "engines": {
         "node": ">=21.0.0"
