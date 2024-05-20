@@ -194,7 +194,7 @@ be a huge payload with dozens of fields, but you only really care about 5 or
 6... you can create the schema with only those, and by default the response will
 still validate correctly (as long as those 5 or 6 were correct), and the return
 data will be stripped of the fields not in the schema, giving you back just what
-you need! 🔥
+you need, a la GraphQL! 🔥
 
 That is the default behaviour. You can also make it fail validation if there are
 more fields than your schema has, or still include those extra fields in the
