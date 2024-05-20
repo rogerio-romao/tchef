@@ -1,14 +1,14 @@
 {
     "name": "tchef",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "A better Fetch - with bells and whistles",
     "main": "dist/index.js",
     "types": "dist/src/index.d.ts",
     "type": "module",
     "scripts": {
-        "bump:patch": "npx changelogen@latest --bump --patch",
-        "bump:minor": "npx changelogen@latest --bump --minor",
-        "bump:major": "npx changelogen@latest --bump --major",
+        "bump:patch": "npm version patch",
+        "bump:minor": "npm version minor",
+        "bump:major": "npm version major",
         "build": "run-s build:node build:types",
         "build:node": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap --external:all",
         "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
