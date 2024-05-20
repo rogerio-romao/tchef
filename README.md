@@ -1,5 +1,9 @@
 # Tchef
 
+![npm](https://img.shields.io/npm/v/tchef)
+![License](https://img.shields.io/npm/l/tchef)
+![Build Status](https://img.shields.io/github/actions/workflow/status/rogerio-romao/tchef/ci.yml)
+
 ## A better Fetch - with bells and whistles
 
 _Warning: this is a heavily wip package that is in initial stages, and also my
