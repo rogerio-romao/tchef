@@ -10,6 +10,15 @@ import sleep from './utils/sleep.ts';
 // types
 import type { TchefOptions, TchefResult } from './types';
 
+/**
+ * tchef wraps the fetch API with additional features like retries, validation, and more.
+ *
+ * @param url The URL to fetch, as a string. Can include search params.
+ * @param options The options for the request. This includes the method, headers, response format, cache type, cache max age, timeout, retries, retry delay, and more.
+ * @param currentRetries The current number of retries. This is used internally for recursive calls. Do not set this manually.
+ * @param transitiveErrorMessage The error message from the previous attempt. This is used internally for recursive calls. Do not set this manually.
+ * @returns The result of the request. This can be a success or an error. On success, an object with the data is returned. On error, an object with the error message is returned.
+ */
 export default async function tchef<T = unknown>(
     url: string,
     options: TchefOptions = {},
