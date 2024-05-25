@@ -7,19 +7,11 @@ export default function generateSearchParams(
 ): URL {
     const urlHasSearchParams = url.searchParams.size > 0;
 
-    if (!options.searchParams || options.searchParams.length === 0) {
+    if (!options.searchParams) {
         return url;
     }
 
-    for (const param of options.searchParams) {
-        const key = Object.keys(param)[0];
-        if (key == null) {
-            continue;
-        }
-        const value = param[key];
-        if (value == null) {
-            continue;
-        }
+    for (const [key, value] of Object.entries(options.searchParams)) {
         if (urlHasSearchParams) {
             const isConflict = url.searchParams.has(key);
             if (isConflict) {
