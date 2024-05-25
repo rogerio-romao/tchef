@@ -13,7 +13,7 @@ export type ResponseFormat = 'json' | 'text' | 'blob';
  * @param responseFormat - Format of the response (default: 'json') valid values are 'json', 'text', 'blob'
  * @param cacheType - Cache type header to use (default: 'no-cache') valid values are 'no-cache', 'private', 'public'
  * @param cacheMaxAge - Cache max age in seconds
- * @param searchParams - Array of search params to add to the URL
+ * @param searchParams - Search params object to add to the URL
  * @param timeoutSecs - Timeout in seconds (default: 'no-limit') valid values are 'no-limit' or a number bigger than 0
  * @param signal - Abort signal to cancel the request
  * @param retries - Number of retries to do in case of failure (default: 0)
@@ -27,7 +27,7 @@ export type TchefOptions = {
     responseFormat?: ResponseFormat;
     cacheType?: 'no-cache' | 'private' | 'public';
     cacheMaxAge?: number;
-    searchParams?: Array<Record<string, string | number>>;
+    searchParams?: Record<string, string | number>;
     timeoutSecs?: 'no-limit' | number;
     signal?: AbortSignal;
     retries?: number;

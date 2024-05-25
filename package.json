@@ -1,6 +1,6 @@
 {
     "name": "tchef",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "A better Fetch - with bells and whistles",
     "main": "dist/index.js",
     "types": "dist/src/index.d.ts",
@@ -11,7 +11,7 @@
         "bump:major": "npm version major",
         "build": "run-s build:node build:types",
         "build:node": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap --external:all",
-        "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
+        "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir dist --declarationMap --allowJs --outDir dist",
         "commit:check": "run-s lint test:ci build",
         "dev": "run-p dev:*",
         "dev:tsc": "tsc --watch --preserveWatchOutput --noEmit",

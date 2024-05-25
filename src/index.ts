@@ -296,3 +296,5 @@ export default async function tchef<T = unknown>(
         };
     }
 }
+
+export { type TchefOptions, type TchefResult } from './types.ts';
