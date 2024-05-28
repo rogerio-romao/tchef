@@ -52,7 +52,7 @@ Otherwise, you get
 
 ```ts
 {
-    ok: false, error: string; statusCode: number;
+    ok: false, error: string, statusCode: number;
 }
 ```
 
