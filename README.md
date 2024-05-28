@@ -33,8 +33,8 @@ console.log(res);
 
 So, very simple and at the most basic, the same as using Fetch normaly. Except
 the return is a result type, and the call doesn't need to be wrapped on
-try/catch. If an error occurs, you get `ok: false` and an error message returned
-to you.
+try/catch. If an error occurs, you get `ok: false`, a statusCode and an error
+message returned to you.
 
 ### Features
 
@@ -52,7 +52,7 @@ Otherwise, you get
 
 ```ts
 {
-    ok: false, error: string;
+    ok: false, error: string; statusCode: number;
 }
 ```
 
@@ -101,7 +101,7 @@ a timeout for 1 second:
 ```ts
  await tchef('https://httpbin.org/delay/2', { timeoutSecs: 1 });
  // that url will only reply after 2 seconds, so this will return:
- { ok: false, error: 'Request timeout' }
+ { ok: false, error: 'Request timeout', statusCode: 408 }
 ```
 
 This way you can send an abort signal, that could be triggered by a button on
@@ -128,7 +128,8 @@ and will be returned on the last attempt.
 const result = await tchef('https://thisisfake.url', { retries: 2 });
 
 if (!result.ok) {
-    expect(result.error).toBe('Max retries reached. 404 - Not Found');
+    expect(result.error).toBe('Max retries reached. Not Found');
+    expect(result.statusCode).toBe(404);
 }
 ```
 
@@ -220,9 +221,6 @@ await tchef('https://example.com/todo/1', { validateSchema: TodoSchema });
 The key is the `unknown()` call on the second argument - this will pass through
 the extra fields. If you set it to `never()` instead, validation will error out
 and tchef will return
-`{ ok: false, error: 'Response failed to validate against schema.' }`. Again,
-check [Valibot](https://valibot.dev/) for more information on it's features.
-
-ROADMAP:
-
--   more robust caching features
+`{ ok: false, error: 'Response failed to validate against schema.', statusCode: 409 }`.
+Again, check [Valibot](https://valibot.dev/) for more information on it's
+features.
