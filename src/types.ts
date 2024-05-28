@@ -44,7 +44,8 @@ export type TchefOptions = {
  * @param ok - True if the request was successful, false otherwise
  * @param data - Data returned by the request
  * @param error - Error message in case of failure
+ * @param statusCode - Error status code in case of failure
  */
 export type TchefResult<T> =
-    | { data: T; ok: true }
-    | { error: string; ok: false };
+    | { ok: true; data: T;  }
+    | { ok: false; error: string; statusCode: number };

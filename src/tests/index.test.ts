@@ -19,13 +19,14 @@ describe('URL based tests', () => {
         expect(await tchef('gibberish')).toStrictEqual({
             ok: false,
             error: 'Invalid URL',
+            statusCode: 400,
         });
     });
 
     test('does not crash on 404 url', async () => {
         expect(
             await tchef('https://jsonplaceholder.typicode.com/thisisfake')
-        ).toStrictEqual({ ok: false, error: '404 - Not Found' });
+        ).toStrictEqual({ ok: false, error: 'Not Found', statusCode: 404 });
     });
 });
 
@@ -138,6 +139,7 @@ describe('Error handling tests', () => {
         expect(await tchef('http://localhost:3000/malformed')).toStrictEqual({
             ok: false,
             error: 'Invalid JSON',
+            statusCode: 422,
         });
     });
 });
@@ -178,7 +180,11 @@ describe('Timeout and abort tests', () => {
             await tchef('https://httpbin.org/delay/2', {
                 timeoutSecs: 1,
             })
-        ).toStrictEqual({ ok: false, error: 'Request timeout' });
+        ).toStrictEqual({
+            ok: false,
+            error: 'Request timeout',
+            statusCode: 408,
+        });
     });
 
     test('can handle an abort', async () => {
@@ -189,7 +195,11 @@ describe('Timeout and abort tests', () => {
             await tchef('https://httpbin.org/delay/2', {
                 signal: controller.signal,
             })
-        ).toStrictEqual({ ok: false, error: 'Request aborted' });
+        ).toStrictEqual({
+            ok: false,
+            error: 'Request aborted',
+            statusCode: 499,
+        });
     });
 
     test('doesnt abort if request is already done', async () => {
@@ -219,7 +229,7 @@ describe('Retry tests', () => {
         );
 
         if (!result.ok) {
-            expect(result.error).toBe('Max retries reached. 404 - Not Found');
+            expect(result.error).toBe('Max retries reached. Not Found');
         }
     }, 10000);
 
@@ -240,8 +250,9 @@ describe('Retry tests', () => {
 
         if (!result.ok) {
             expect(result.error).toBe(
-                'Max retries reached. 500 - INTERNAL SERVER ERROR'
+                'Max retries reached. INTERNAL SERVER ERROR'
             );
+            expect(result.statusCode).toBe(500);
         }
     });
 
@@ -257,6 +268,7 @@ describe('Retry tests', () => {
         ).toStrictEqual({
             ok: false,
             error: 'Request aborted, retries cancelled',
+            statusCode: 499,
         });
     });
 
@@ -269,6 +281,7 @@ describe('Retry tests', () => {
         ).toStrictEqual({
             ok: false,
             error: 'Max retries reached. Request timeout',
+            statusCode: 408,
         });
     });
 
@@ -280,6 +293,7 @@ describe('Retry tests', () => {
         ).toStrictEqual({
             ok: false,
             error: 'Max retries reached. fetch failed',
+            statusCode: 500,
         });
     });
 });

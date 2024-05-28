@@ -17,7 +17,7 @@ import type { TchefOptions, TchefResult } from './types';
  * @param options The options for the request. This includes the method, headers, response format, cache type, cache max age, timeout, retries, retry delay, and more.
  * @param currentRetries The current number of retries. This is used internally for recursive calls. Do not set this manually.
  * @param transitiveErrorMessage The error message from the previous attempt. This is used internally for recursive calls. Do not set this manually.
- * @returns The result of the request. This can be a success or an error. On success, an object with the data is returned. On error, an object with the error message is returned.
+ * @returns The result of the request. This can be a success or an error. On success, an object with the data is returned. On error, an object with the error message and statusCode code is returned.
  */
 export default async function tchef<T = unknown>(
     url: string,
@@ -30,6 +30,7 @@ export default async function tchef<T = unknown>(
         return {
             ok: false,
             error: 'Fetch not supported on current platform, use latest versions.',
+            statusCode: 400,
         };
     }
 
@@ -70,7 +71,7 @@ export default async function tchef<T = unknown>(
         // Check if the URL is valid
         const urlIsValid = URL.canParse(url);
         if (!urlIsValid) {
-            return { ok: false, error: 'Invalid URL' };
+            return { ok: false, error: 'Invalid URL', statusCode: 400 };
         }
 
         // Generate the URL with search params
@@ -115,7 +116,8 @@ export default async function tchef<T = unknown>(
 
                 return {
                     ok: false,
-                    error: `${response.status} - ${response.statusText}`,
+                    error: response.statusText,
+                    statusCode: response.status,
                 };
             }
 
@@ -132,6 +134,7 @@ export default async function tchef<T = unknown>(
                                 ? {
                                       ok: false,
                                       error: 'Response failed to validate against schema.',
+                                      statusCode: 409,
                                   }
                                 : {
                                       ok: true,
@@ -147,7 +150,11 @@ export default async function tchef<T = unknown>(
                         const blob = await response.blob();
                         return { ok: true, data: blob as unknown as T };
                     default:
-                        return { ok: false, error: 'Invalid response format' };
+                        return {
+                            ok: false,
+                            error: 'Invalid response format',
+                            statusCode: 409,
+                        };
                 }
             } catch (error) {
                 // Handle parsing errors
@@ -155,7 +162,7 @@ export default async function tchef<T = unknown>(
                     case 'json':
                         if (hasRetries) {
                             // store the error message
-                            transitiveError = 'Invalid JSON';
+                            transitiveError = '422 - Invalid JSON';
 
                             // Retry the request
                             await sleep(retryWaitTime);
@@ -168,12 +175,16 @@ export default async function tchef<T = unknown>(
                             );
                         }
 
-                        return { ok: false, error: 'Invalid JSON' };
+                        return {
+                            ok: false,
+                            error: 'Invalid JSON',
+                            statusCode: 422,
+                        };
 
                     case 'text':
                         if (hasRetries) {
                             // store the error message
-                            transitiveError = 'Invalid text';
+                            transitiveError = '422 - Invalid text';
 
                             // Retry the request
                             await sleep(retryWaitTime);
@@ -186,12 +197,16 @@ export default async function tchef<T = unknown>(
                             );
                         }
 
-                        return { ok: false, error: 'Invalid text' };
+                        return {
+                            ok: false,
+                            error: 'Invalid text',
+                            statusCode: 422,
+                        };
 
                     case 'blob':
                         if (hasRetries) {
                             // store the error message
-                            transitiveError = 'Invalid blob';
+                            transitiveError = '422 - Invalid blob';
 
                             // Retry the request
                             await sleep(retryWaitTime);
@@ -204,12 +219,16 @@ export default async function tchef<T = unknown>(
                             );
                         }
 
-                        return { ok: false, error: 'Invalid blob' };
+                        return {
+                            ok: false,
+                            error: 'Invalid blob',
+                            statusCode: 422,
+                        };
 
                     default:
                         if (hasRetries) {
                             // store the error message
-                            transitiveError = 'Invalid response format';
+                            transitiveError = '422 - Invalid response format';
 
                             // Retry the request
                             await sleep(retryWaitTime);
@@ -222,7 +241,11 @@ export default async function tchef<T = unknown>(
                             );
                         }
 
-                        return { ok: false, error: 'Invalid response format' };
+                        return {
+                            ok: false,
+                            error: 'Invalid response format',
+                            statusCode: 422,
+                        };
                 }
             }
         } catch (error) {
@@ -233,6 +256,7 @@ export default async function tchef<T = unknown>(
                     error: `Request aborted${
                         hasRetries ? ', retries cancelled' : ''
                     }`,
+                    statusCode: 499,
                 };
             }
             if (
@@ -241,7 +265,7 @@ export default async function tchef<T = unknown>(
             ) {
                 if (hasRetries) {
                     // store the error message
-                    transitiveError = 'Request timeout';
+                    transitiveError = '408 - Request timeout';
 
                     // Retry the request
                     await sleep(retryWaitTime);
@@ -254,13 +278,13 @@ export default async function tchef<T = unknown>(
                     );
                 }
 
-                return { ok: false, error: 'Request timeout' };
+                return { ok: false, error: 'Request timeout', statusCode: 408 };
             }
             // Handle network errors
             if (error instanceof Error) {
                 if (hasRetries) {
                     // store the error message
-                    transitiveError = error.message;
+                    transitiveError = `500 - ${error.message}`;
 
                     // Retry the request
                     await sleep(retryWaitTime);
@@ -273,12 +297,12 @@ export default async function tchef<T = unknown>(
                     );
                 }
 
-                return { ok: false, error: error.message };
+                return { ok: false, error: error.message, statusCode: 500 };
             }
 
             if (hasRetries) {
                 // store the error message
-                transitiveError = 'Network Error';
+                transitiveError = '500 - Network Error';
 
                 // Retry the request
                 await sleep(retryWaitTime);
@@ -286,13 +310,16 @@ export default async function tchef<T = unknown>(
                 return tchef(url, options, currentRetries + 1, transitiveError);
             }
 
-            return { ok: false, error: 'Network Error' };
+            return { ok: false, error: 'Network Error', statusCode: 500 };
         }
     } else {
         // Max retries reached
+        const [status, errorMessage] = transitiveErrorMessage.split(' - ');
+
         return {
             ok: false,
-            error: `Max retries reached. ${transitiveErrorMessage}`,
+            error: `Max retries reached. ${errorMessage}`,
+            statusCode: Number(status),
         };
     }
 }
