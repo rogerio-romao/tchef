@@ -16,6 +16,11 @@ Node. It's also a modern, ESM only module, no other exports provided. It is
 written in Typescript and ships with the types, so it's ready to get help from
 your IDE on using it and autocompletion.
 
+For now, I haven't been able to have it run with a normal import in the browser.
+It works but with `import tchef from './node_modules/tchef/dist/index.js';`
+instead of `import tchef from 'tchef'. That will have to do for now, until I
+figure out the solution - suggestions welcome!
+
 ### Installation & Basic Usage
 
 ```sh
@@ -224,3 +229,7 @@ and tchef will return
 `{ ok: false, error: 'Response failed to validate against schema.', statusCode: 409 }`.
 Again, check [Valibot](https://valibot.dev/) for more information on it's
 features.
+
+### Roadmap
+
+-   [ ] Browser build that allows normal ESM import.
