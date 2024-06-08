@@ -1,10 +1,10 @@
 {
     "name": "tchef",
-    "version": "0.4.11",
+    "version": "0.4.12",
     "description": "A better Fetch - with bells and whistles",
-    "main": "dist/index-node.js",
-    "module": "dist/index-node.js",
-    "browser": "dist/index-browser.mjs",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "browser": "dist/index.mjs",
     "types": "dist/src/index.d.ts",
     "type": "module",
     "scripts": {
