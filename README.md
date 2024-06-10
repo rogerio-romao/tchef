@@ -24,7 +24,8 @@ figure out the solution - suggestions welcome!
 ### Installation & Basic Usage
 
 ```sh
-npm i tchef
+# with pnpm - or use your preferred package manager
+pnpm add tchef
 ```
 
 In your project:
@@ -229,6 +230,15 @@ and tchef will return
 `{ ok: false, error: 'Response failed to validate against schema.', statusCode: 409 }`.
 Again, check [Valibot](https://valibot.dev/) for more information on it's
 features.
+
+#### Validation feature known issues:
+
+-   If you get an error when trying to use the validation feature, that it
+    cannot find Valibot, you can either try `pnpm i --shamefully-hoist`, that
+    will rebuild your node_modules folder and pull up valibot from within
+    Tchef's dependencies to the top level (recommended). Or you can install
+    Valibot on your dependencies yourself - this should also work but you will
+    have duplicated dependency and potential version mismatches.
 
 ### Roadmap
 

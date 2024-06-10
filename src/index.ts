@@ -18,6 +18,36 @@ import type { TchefOptions, TchefResult } from './types';
  * @param currentRetries The current number of retries. This is used internally for recursive calls. Do not set this manually.
  * @param transitiveErrorMessage The error message from the previous attempt. This is used internally for recursive calls. Do not set this manually.
  * @returns The result of the request. This can be a success or an error. On success, an object with the data is returned. On error, an object with the error message and statusCode code is returned.
+ *
+ * @example
+ * ```ts
+ * // basic usage
+ * const result = await tchef('https://jsonplaceholder.typicode.com/todos/1');
+ * console.log(result);
+ * ```
+ *
+ * @example
+ * ```ts
+ * // with timeout
+ * const result = await tchef('https://httpbin.org/delay/2', { timeoutSecs: 1 });
+ * // that url will only reply after 2 seconds, so this will return:
+ * { ok: false, error: 'Request timeout', statusCode: 408 }
+ * ```
+ *
+ * @example
+ * ```ts
+ * // with retries
+ * const result = await tchef('https://thisisfake.url', { retries: 2 });
+ * // that url does not exist, so this will return:
+ * { ok: false, error: 'Max retries reached. Not Found', statusCode: 404 }
+ * ```
+ *
+ * @example
+ * ```ts
+ * // with generic type
+ * const result = await tchef<{ userId: number }>('https://jsonplaceholder.typicode.com/todos/1');
+ * console.log(result.data.userId);
+ * ```
  */
 export default async function tchef<T = unknown>(
     url: string,
