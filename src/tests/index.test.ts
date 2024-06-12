@@ -210,7 +210,7 @@ describe('Timeout and abort tests', () => {
         ).toMatchObject({ ok: true });
     });
 
-    test('doesnt timeout if no limit is set', async () => {
+    test.skipIf(isCi)('doesnt timeout if no limit is set', async () => {
         expect(
             await tchef('https://httpbin.org/delay/4', {
                 timeoutSecs: 'no-limit',
