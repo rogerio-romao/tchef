@@ -3,23 +3,46 @@
 ![npm](https://img.shields.io/npm/v/tchef)
 ![License](https://img.shields.io/npm/l/tchef)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/rogerio-romao/tchef/ci.yml)
+[![JSR](https://jsr.io/badges/@rogerio-romao/tchef)](https://jsr.io/@rogerio-romao/tchef)
+[![JSR](https://jsr.io/badges/@rogerio-romao/tchef/score)](https://jsr.io/@rogerio-romao/tchef)
 
 ## A better Fetch - with bells and whistles
 
 _Warning: this is a heavily wip package that is in initial stages, and also my
-first ever package. Use it at your own risk._
+first ever package. Use it at your own risk. I have made it for my own personal
+use, because at my work I am constantly writing `fetch` functions to grab data,
+and it got tiresome to do try-catch blocks all the time, and having to check for
+errors even in the try block. I also wanted the ability to have retries in case
+of error and to type the responses, so this package is the result of that._
 
-It's meant to work on Node and browsers, just assumes a fairly recent version,
-since it assumes that it has native Fetch implementation. Recommended Node >=21,
-although it may work with earlier versions, but you may need to set a flag on
-Node. It's also a modern, ESM only module, no other exports provided. It is
-written in Typescript and ships with the types, so it's ready to get help from
-your IDE on using it and autocompletion.
+It's meant to work on Node, other JS runtimes and browsers, just assumes a
+fairly recent version, since it assumes that it has native Fetch implementation.
+Recommended Node >=21, although it may work with earlier (>18) versions, but you
+may need to set a flag on Node. It's also a modern, ESM only module, no other
+exports provided. It is written in Typescript and ships with the types, so it's
+ready to get help from your IDE on using it and autocompletion.
 
-For now, I haven't been able to have it run with a normal import in the browser.
-It works but with `import tchef from './node_modules/tchef/dist/index.js';`
-instead of `import tchef from 'tchef'. That will have to do for now, until I
-figure out the solution - suggestions welcome!
+### Runtimes & Browser Compatibility
+
+Compatible with: ![Node.js](./src/svg/node.svg) ![Deno](./src/svg/deno.svg)
+![Bun](./src/svg/bun.svg)
+![Cloudflare Workers](./src/svg/cloudflare-workers.svg)
+
+The package is published both on [npm](https://www.npmjs.com/package/tchef/) and
+[jsr](https://jsr.io/@rogerio-romao/tchef/). Tested and compatible with the
+following:
+
+-   Node.js
+-   Deno
+-   Bun
+-   CloudflareWorkers
+
+On browsers, it (kinda) works - it does it's job, just have to import it
+weirdly. For now, I haven't been able to have it run with a normal import in the
+browser. It works but with
+`import tchef from './node_modules/tchef/dist/index.js';` instead of
+`import tchef from 'tchef'`. That will have to do for now, until I figure out
+the solution - suggestions welcome!
 
 ### Installation & Basic Usage
 
@@ -41,6 +64,10 @@ So, very simple and at the most basic, the same as using Fetch normaly. Except
 the return is a result type, and the call doesn't need to be wrapped on
 try/catch. If an error occurs, you get `ok: false`, a statusCode and an error
 message returned to you.
+
+To use the JSR version of the package instead, follow the instructions
+[here](https://jsr.io/@rogerio-romao/tchef/). It will still work on any of the
+compatible runtimes listed above.
 
 ### Features
 
