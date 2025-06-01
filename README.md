@@ -39,7 +39,9 @@ following:
 
 In browsers, it also works, you will need a bundler to be able to use ESM `import` 
 syntax, or you can use a CDN script in your html such as this:
-`<script src="https://unpkg.com/tchef@0.4.14/dist/index.js"></script>`
+```html
+<script src="https://unpkg.com/tchef@0.4.14/dist/index.js"></script>
+```
 
 ### Installation & Basic Usage
 
