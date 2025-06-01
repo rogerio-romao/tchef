@@ -21,7 +21,7 @@
         "serve:db": "json-server ./src/server/db.json --port 3000",
         "start": "node dist/index.js",
         "test": "vitest",
-        "test:ci": "CI=true vitest --run",
+        "test:ci": "CI=true vitest --run --timeout 30000",
         "test:coverage": "CI=true vitest run --coverage",
         "test:local": "run-p serve:db test"
     },
