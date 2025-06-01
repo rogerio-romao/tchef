@@ -37,12 +37,9 @@ following:
 -   Bun
 -   CloudflareWorkers
 
-On browsers, it (kinda) works - it does it's job, just have to import it
-weirdly. For now, I haven't been able to have it run with a normal import in the
-browser. It works but with
-`import tchef from './node_modules/tchef/dist/index.js';` instead of
-`import tchef from 'tchef'`. That will have to do for now, until I figure out
-the solution - suggestions welcome!
+In browsers, it also works, you will need a bundler to be able to use ESM `import` 
+syntax, or you can use a CDN script in your html such as this:
+`<script src="https://unpkg.com/tchef@0.4.14/dist/index.js"></script>`
 
 ### Installation & Basic Usage
 
