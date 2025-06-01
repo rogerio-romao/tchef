@@ -203,19 +203,17 @@ describe('Timeout and abort tests', () => {
     });
 
     test('doesnt abort if request is already done', async () => {
-        expect(
-            await tchef('https://httpbin.org/delay/1', {
-                timeoutSecs: 2,
-            })
-        ).toMatchObject({ ok: true });
+        const result = await tchef('https://httpbin.org/delay/1', {
+            timeoutSecs: 2,
+        });
+        expect(result).toMatchObject({ ok: true });
     });
 
     test.skipIf(isCi)('doesnt timeout if no limit is set', async () => {
-        expect(
-            await tchef('https://httpbin.org/delay/4', {
-                timeoutSecs: 'no-limit',
-            })
-        ).toMatchObject({ ok: true });
+        const result = await tchef('https://httpbin.org/delay/4', {
+            timeoutSecs: 'no-limit',
+        });
+        expect(result).toMatchObject({ ok: true });
     });
 });
 
