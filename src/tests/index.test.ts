@@ -241,7 +241,7 @@ describe('Retry tests', () => {
         }
     });
 
-    test('can retry a 500 request', async () => {
+    test.skipIf(isCi)('can retry a 500 request', async () => {
         const result = await tchef('https://httpbin.org/status/500', {
             retries: 2,
         });
