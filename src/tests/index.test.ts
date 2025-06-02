@@ -202,7 +202,7 @@ describe('Timeout and abort tests', () => {
         });
     });
 
-    test('doesnt abort if request is already done', async () => {
+    test.skipIf(isCi)('doesnt abort if request is already done', async () => {
         const result = await tchef('https://httpbin.org/delay/1', {
             timeoutSecs: 2,
         });
@@ -241,7 +241,7 @@ describe('Retry tests', () => {
         }
     });
 
-    test('can retry a 500 request', async () => {
+    test.skipIf(isCi)('can retry a 500 request', async () => {
         const result = await tchef('https://httpbin.org/status/500', {
             retries: 2,
         });
