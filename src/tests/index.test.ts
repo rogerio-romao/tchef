@@ -202,7 +202,7 @@ describe('Timeout and abort tests', () => {
         });
     });
 
-    test('doesnt abort if request is already done', async () => {
+    test.skipIf(isCi)('doesnt abort if request is already done', async () => {
         const result = await tchef('https://httpbin.org/delay/1', {
             timeoutSecs: 2,
         });
