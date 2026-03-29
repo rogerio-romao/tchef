@@ -28,7 +28,7 @@
     "author": "Rogerio Romao",
     "license": "ISC",
     "devDependencies": {
-        "@types/node": "^20.12.7",
+        "@types/node": "^25.5.0",
         "@typescript-eslint/eslint-plugin": "^7.0.0",
         "@typescript-eslint/parser": "^7.0.0",
         "@vitest/coverage-v8": "^1.6.0",
