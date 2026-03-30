@@ -1,6 +1,7 @@
 // types
-import type { TchefOptions } from '../types';
+import type { TchefOptions } from '@/types';
 
+// oxlint-disable-next-line max-statements
 export default function generateHeaders(
     src: TchefOptions,
     target: TchefOptions
@@ -8,43 +9,48 @@ export default function generateHeaders(
     const conditionalHeaders: Record<string, string> = {};
 
     const cacheOptions = {
-        cacheType: target.cacheType ?? src.cacheType,
         cacheMaxAge: target.cacheMaxAge ?? src.cacheMaxAge,
+        cacheType: target.cacheType ?? src.cacheType,
     };
 
     if (cacheOptions.cacheType) {
-        conditionalHeaders[
-            'Cache-Control'
-        ] = `${cacheOptions.cacheType}, max-age=${cacheOptions.cacheMaxAge}`;
+        conditionalHeaders['Cache-Control'] =
+            `${cacheOptions.cacheType}, max-age=${cacheOptions.cacheMaxAge}`;
     }
 
     if (target.method && target.method !== 'GET') {
-        if (target.headers?.['Content-type'] == null) {
+        if (target.headers?.['Content-type'] === undefined) {
             switch (target.responseFormat) {
-                case 'text':
+                case 'text': {
                     conditionalHeaders['Content-type'] =
                         'text/plain; charset=UTF-8';
                     break;
-                case 'blob':
+                }
+                case 'blob': {
                     conditionalHeaders['Content-type'] =
                         'application/octet-stream';
                     break;
-                default:
+                }
+                default: {
                     conditionalHeaders['Content-type'] =
                         'application/json; charset=UTF-8';
                     break;
+                }
             }
         }
-    } else if (target.headers?.Accept == null) {
+    } else if (target.headers?.Accept === undefined) {
         switch (target.responseFormat) {
-            case 'text':
+            case 'text': {
                 conditionalHeaders.Accept = 'text/*';
                 break;
-            case 'blob':
+            }
+            case 'blob': {
                 conditionalHeaders.Accept = '*/*';
                 break;
-            default:
+            }
+            default: {
                 break;
+            }
         }
     }
 

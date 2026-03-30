@@ -1,0 +1,76 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": [
+        "eslint",
+        "import",
+        "jsdoc",
+        "node",
+        "oxc",
+        "promise",
+        "typescript",
+        "unicorn",
+        "vitest"
+    ],
+    "categories": {
+        "correctness": "error",
+        "nursery": "warn",
+        "pedantic": "warn",
+        "perf": "warn",
+        "restriction": "warn",
+        "style": "warn",
+        "suspicious": "warn"
+    },
+    "rules": {
+        "eslint/capitalized-comments": "off",
+        "eslint/id-length": "off",
+        "eslint/max-depth": ["warn", 5],
+        "eslint/max-lines-per-function": ["warn", 100],
+        "eslint/max-params": ["warn", 4],
+        "eslint/no-continue": "off",
+        "eslint/no-duplicate-imports": [
+            "error",
+            { "allowSeparateTypeImports": true }
+        ],
+        "eslint/no-magic-numbers": "off",
+        "eslint/no-ternary": "off",
+        "eslint/no-undefined": "off",
+        "eslint/sort-imports": [
+            "warn",
+            {
+                "ignoreCase": true,
+                "allowSeparatedGroups": true,
+                "memberSyntaxSortOrder": ["none", "all", "single", "multiple"]
+            }
+        ],
+        "import/no-default-export": "off",
+        "import/no-named-export": "off",
+        "oxc/no-async-await": "off",
+        "oxc/no-optional-chaining": "off",
+        "oxc/no-rest-spread-properties": "off",
+        "unicorn/filename-case": ["warn", { "case": "camelCase" }],
+        "unicorn/no-null": "off"
+    },
+    "settings": {
+        "jsdoc": {
+            "ignorePrivate": false,
+            "ignoreInternal": false,
+            "ignoreReplacesDocs": true,
+            "overrideReplacesDocs": true,
+            "augmentsExtendsReplacesDocs": false,
+            "implementsReplacesDocs": false,
+            "exemptDestructuredRootsFromChecks": false,
+            "tagNamePreference": {}
+        },
+        "vitest": {
+            "typecheck": false
+        }
+    },
+    "env": {
+        "builtin": true,
+        "browser": true,
+        "node": true,
+        "vitest": true
+    },
+    "globals": {},
+    "ignorePatterns": []
+}

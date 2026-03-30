@@ -1,67 +1,68 @@
-import { expect, test } from 'vitest';
-import type { TchefOptions } from '../types';
-import retryDelayTime from '../utils/retryDelayTime.ts';
+import retryDelayTime from '@/utils/retryDelayTime.ts';
+import type { TchefOptions } from '@/types';
 
-test('retryDelayTime default', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 100,
-    };
+describe('retries tests', () => {
+    it('retryDelayTime default', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 100,
+        };
 
-    const currentRetries = 0;
-    const result = retryDelayTime(defaultOptions, currentRetries);
-    expect(result).toBe(100);
-});
+        const currentRetries = 0;
+        const result = retryDelayTime(defaultOptions, currentRetries);
+        expect(result).toBe(100);
+    });
 
-test('options override default', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 100,
-    };
+    it('options override default', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 100,
+        };
 
-    const currentRetries = 0;
-    const options: TchefOptions = {
-        retryDelayMs: 200,
-    };
+        const currentRetries = 0;
+        const options: TchefOptions = {
+            retryDelayMs: 200,
+        };
 
-    const result = retryDelayTime(defaultOptions, currentRetries, options);
-    expect(result).toBe(200);
-});
+        const result = retryDelayTime(defaultOptions, currentRetries, options);
+        expect(result).toBe(200);
+    });
 
-test('retryDelayTime exponential 1', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 'exponential',
-    };
+    it('retryDelayTime exponential 1', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 'exponential',
+        };
 
-    const currentRetries = 0;
-    const result = retryDelayTime(defaultOptions, currentRetries);
-    expect(result).toBe(2000);
-});
+        const currentRetries = 0;
+        const result = retryDelayTime(defaultOptions, currentRetries);
+        expect(result).toBe(2000);
+    });
 
-test('retryDelayTime exponential 2', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 'exponential',
-    };
+    it('retryDelayTime exponential 2', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 'exponential',
+        };
 
-    const currentRetries = 1;
-    const result = retryDelayTime(defaultOptions, currentRetries);
-    expect(result).toBe(4000);
-});
+        const currentRetries = 1;
+        const result = retryDelayTime(defaultOptions, currentRetries);
+        expect(result).toBe(4000);
+    });
 
-test('retryDelayTime exponential 3', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 'exponential',
-    };
+    it('retryDelayTime exponential 3', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 'exponential',
+        };
 
-    const currentRetries = 2;
-    const result = retryDelayTime(defaultOptions, currentRetries);
-    expect(result).toBe(8000);
-});
+        const currentRetries = 2;
+        const result = retryDelayTime(defaultOptions, currentRetries);
+        expect(result).toBe(8000);
+    });
 
-test('retryDelayTime exponential 4', () => {
-    const defaultOptions: TchefOptions = {
-        retryDelayMs: 'exponential',
-    };
+    it('retryDelayTime exponential 4', () => {
+        const defaultOptions: TchefOptions = {
+            retryDelayMs: 'exponential',
+        };
 
-    const currentRetries = 3;
-    const result = retryDelayTime(defaultOptions, currentRetries);
-    expect(result).toBe(16000);
+        const currentRetries = 3;
+        const result = retryDelayTime(defaultOptions, currentRetries);
+        expect(result).toBe(16_000);
+    });
 });

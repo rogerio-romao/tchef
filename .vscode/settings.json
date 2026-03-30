@@ -1,0 +1,6 @@
+{
+    "oxc.enable.oxlint": true,
+    "editor.codeActionsOnSave": {
+        "source.sortImports": "never"
+    }
+}

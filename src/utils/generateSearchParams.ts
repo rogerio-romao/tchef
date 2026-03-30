@@ -1,5 +1,5 @@
 // types
-import type { TchefOptions } from '../types';
+import type { TchefOptions } from '@/types';
 
 export default function generateSearchParams(
     url: URL,

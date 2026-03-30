@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-operators */
 // types
-import type { TchefOptions } from '../types';
+import type { TchefOptions } from '@/types';
 
 export default function retryDelayTime(
     defaultOptions: TchefOptions,
@@ -19,7 +19,8 @@ export default function retryDelayTime(
                 : 'fixed';
 
         if (defaultDelayType === 'fixed') {
-            return Number(defaultOptions.retryDelayMs); // should be a number already, making TS happy
+            // should be a number already, making TS happy
+            return Number(defaultOptions.retryDelayMs);
         }
 
         // Exponential delay
@@ -30,7 +31,8 @@ export default function retryDelayTime(
         options.retryDelayMs === 'exponential' ? 'exponential' : 'fixed';
 
     if (optionsDelayType === 'fixed') {
-        return Number(options.retryDelayMs); // should be a number already, making TS happy
+        // should be a number already, just making TS happy
+        return Number(options.retryDelayMs);
     }
 
     // Exponential delay

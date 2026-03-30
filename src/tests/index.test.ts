@@ -1,3 +1,7 @@
+// oxlint-disable vitest/no-conditional-in-test, vitest/no-conditional-expect -- need to check for result.ok
+// oxlint-disable vitest/no-standalone-expect -- the skipIf(CI) trip it up
+// oxlint-disable max-lines
+
 import {
     boolean,
     never,
@@ -7,31 +11,37 @@ import {
     optional,
     string,
     unknown,
-    type Output,
 } from 'valibot';
-import { describe, expect, expectTypeOf, test } from 'vitest';
-import tchef from '../index.ts';
 
+import tchef from '@/index.ts';
+
+import type { Output } from 'valibot';
+
+// oxlint-disable-next-line node/no-process-env
 const isCi = process.env.CI === 'true';
 
-describe('URL based tests', () => {
-    test('does not crash on invalid url', async () => {
-        expect(await tchef('gibberish')).toStrictEqual({
-            ok: false,
+describe('uRL based tests', () => {
+    it('does not crash on invalid url', async () => {
+        await expect(tchef('gibberish')).resolves.toStrictEqual({
             error: 'Invalid URL',
+            ok: false,
             statusCode: 400,
         });
     });
 
-    test('does not crash on 404 url', async () => {
-        expect(
-            await tchef('https://jsonplaceholder.typicode.com/thisisfake')
-        ).toStrictEqual({ ok: false, error: 'Not Found', statusCode: 404 });
+    it('does not crash on 404 url', async () => {
+        await expect(
+            tchef('https://jsonplaceholder.typicode.com/thisisfake')
+        ).resolves.toStrictEqual({
+            error: 'Not Found',
+            ok: false,
+            statusCode: 404,
+        });
     });
 });
 
-describe('Basic fetch methods tests', () => {
-    test('does a basic fetch', async () => {
+describe('basic fetch methods tests', () => {
+    it('does a basic fetch', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/todos/1'
         );
@@ -50,19 +60,19 @@ describe('Basic fetch methods tests', () => {
     `);
     });
 
-    test('can execute a POST request', async () => {
+    it('can execute a POST request', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/posts',
             {
-                method: 'POST',
                 body: JSON.stringify({
-                    title: 'foo',
                     body: 'bar',
+                    title: 'foo',
                     userId: 1,
                 }),
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8',
                 },
+                method: 'POST',
             }
         );
 
@@ -80,20 +90,20 @@ describe('Basic fetch methods tests', () => {
     `);
     });
 
-    test('can execute a PUT request', async () => {
+    it('can execute a PUT request', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/posts/1',
             {
-                method: 'PUT',
                 body: JSON.stringify({
+                    body: 'bar',
                     id: 1,
                     title: 'foo',
-                    body: 'bar',
                     userId: 1,
                 }),
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8',
                 },
+                method: 'PUT',
             }
         );
 
@@ -111,7 +121,7 @@ describe('Basic fetch methods tests', () => {
     `);
     });
 
-    test('can execute a DELETE request', async () => {
+    it('can execute a DELETE request', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/posts/1',
             {
@@ -127,25 +137,25 @@ describe('Basic fetch methods tests', () => {
     });
 });
 
-describe('Error handling tests', () => {
-    test('handles errors not caught by response.ok', () => {
-        expect(
-            async () => await tchef('http://unreachable-url')
-        ).not.toThrowError();
+describe('error handling tests', () => {
+    it('handles errors not caught by response.ok', () => {
+        expect(tchef('http://unreachable-url')).not.toThrow();
     });
 
     // Skip this test in CI because it uses a local server
     test.skipIf(isCi)('does not crash on receiving invalid JSON', async () => {
-        expect(await tchef('http://localhost:3000/malformed')).toStrictEqual({
-            ok: false,
+        await expect(
+            tchef('http://localhost:3000/malformed')
+        ).resolves.toStrictEqual({
             error: 'Invalid JSON',
+            ok: false,
             statusCode: 422,
         });
     });
 });
 
-describe('Response type tests', () => {
-    test('can receive a text response', async () => {
+describe('response type tests', () => {
+    it('can receive a text response', async () => {
         const result = await tchef('https://httpbin.org/robots.txt', {
             responseFormat: 'text',
         });
@@ -161,7 +171,7 @@ describe('Response type tests', () => {
     `);
     });
 
-    test('can receive a blob response', async () => {
+    it('can receive a blob response', async () => {
         const result = await tchef('https://httpbin.org/image/jpeg', {
             responseFormat: 'blob',
         });
@@ -174,30 +184,30 @@ describe('Response type tests', () => {
     });
 });
 
-describe('Timeout and abort tests', () => {
-    test('times out correctly', async () => {
-        expect(
-            await tchef('https://httpbin.org/delay/2', {
+describe('timeout and abort tests', () => {
+    it('times out correctly', async () => {
+        await expect(
+            tchef('https://httpbin.org/delay/2', {
                 timeoutSecs: 1,
             })
-        ).toStrictEqual({
-            ok: false,
+        ).resolves.toStrictEqual({
             error: 'Request timeout',
+            ok: false,
             statusCode: 408,
         });
     });
 
-    test('can handle an abort', async () => {
+    it('can handle an abort', async () => {
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 1000);
 
-        expect(
-            await tchef('https://httpbin.org/delay/2', {
+        await expect(
+            tchef('https://httpbin.org/delay/2', {
                 signal: controller.signal,
             })
-        ).toStrictEqual({
-            ok: false,
+        ).resolves.toStrictEqual({
             error: 'Request aborted',
+            ok: false,
             statusCode: 499,
         });
     });
@@ -217,8 +227,8 @@ describe('Timeout and abort tests', () => {
     });
 });
 
-describe('Retry tests', () => {
-    test('can retry a 404 request', async () => {
+describe('retry tests', () => {
+    it('can retry a 404 request', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/thisisfake',
             {
@@ -229,7 +239,7 @@ describe('Retry tests', () => {
         if (!result.ok) {
             expect(result.error).toBe('Max retries reached. Not Found');
         }
-    }, 10000);
+    }, 10_000);
 
     test.skipIf(isCi)('can retry malformed JSON', async () => {
         const result = await tchef('http://localhost:3000/malformed', {
@@ -254,50 +264,50 @@ describe('Retry tests', () => {
         }
     });
 
-    test('doesnt retry on abort', async () => {
+    it('doesnt retry on abort', async () => {
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 1000);
 
-        expect(
-            await tchef('https://httpbin.org/delay/2', {
-                signal: controller.signal,
+        await expect(
+            tchef('https://httpbin.org/delay/2', {
                 retries: 2,
+                signal: controller.signal,
             })
-        ).toStrictEqual({
-            ok: false,
+        ).resolves.toStrictEqual({
             error: 'Request aborted, retries cancelled',
+            ok: false,
             statusCode: 499,
         });
     });
 
-    test('can retry on timeout', async () => {
-        expect(
-            await tchef('https://httpbin.org/delay/2', {
-                timeoutSecs: 1,
+    it('can retry on timeout', async () => {
+        await expect(
+            tchef('https://httpbin.org/delay/2', {
                 retries: 2,
+                timeoutSecs: 1,
             })
-        ).toStrictEqual({
-            ok: false,
+        ).resolves.toStrictEqual({
             error: 'Max retries reached. Request timeout',
+            ok: false,
             statusCode: 408,
         });
     });
 
-    test('can retry on error', async () => {
-        expect(
-            await tchef('http://unreachable-url', {
+    it('can retry on error', async () => {
+        await expect(
+            tchef('http://unreachable-url', {
                 retries: 2,
             })
-        ).toStrictEqual({
-            ok: false,
+        ).resolves.toStrictEqual({
             error: 'Max retries reached. fetch failed',
+            ok: false,
             statusCode: 500,
         });
     });
 });
 
-describe('Generic type tests', () => {
-    test('can type the response 1', async () => {
+describe('generic type tests', () => {
+    it('can type the response 1', async () => {
         const result = await tchef<{ userId: number }>(
             'https://jsonplaceholder.typicode.com/todos/1'
         );
@@ -309,13 +319,13 @@ describe('Generic type tests', () => {
         expect(result.data.userId).toBe(1);
     });
 
-    test('can type the response 2', async () => {
-        type Todo = {
+    it('can type the response 2', async () => {
+        interface Todo {
             userId: number;
             id: number;
             title: string;
             completed: boolean;
-        };
+        }
 
         const result = await tchef<Todo>(
             'https://jsonplaceholder.typicode.com/todos/1'
@@ -328,7 +338,7 @@ describe('Generic type tests', () => {
         expectTypeOf(result.data).toEqualTypeOf<Todo>();
     });
 
-    test('not passing generic gives unknown', async () => {
+    it('not passing generic gives unknown', async () => {
         const result = await tchef(
             'https://jsonplaceholder.typicode.com/todos/1'
         );
@@ -341,13 +351,14 @@ describe('Generic type tests', () => {
     });
 });
 
-describe('Validation tests', () => {
-    test('can validate the response', async () => {
+// oxlint-disable-next-line max-lines-per-function
+describe('validation tests', () => {
+    it('can validate the response', async () => {
         const TodoSchema = object({
-            userId: number(),
+            completed: boolean(),
             id: number(),
             title: string(),
-            completed: boolean(),
+            userId: number(),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -373,12 +384,12 @@ describe('Validation tests', () => {
     `);
     });
 
-    test('can validate the response with error message when schema incorrect', async () => {
+    it('can validate the response with error message when schema incorrect', async () => {
         const TodoSchema = object({
-            userId: string(),
+            completed: string(),
             id: boolean(),
             title: number(),
-            completed: string(),
+            userId: string(),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -390,7 +401,7 @@ describe('Validation tests', () => {
             }
         );
 
-        if (!result.ok) {
+        if (result.ok === false) {
             expect(result.error).toBe(
                 'Response failed to validate against schema.'
             );
@@ -399,11 +410,11 @@ describe('Validation tests', () => {
         }
     });
 
-    test('response with more fields than schema still passes', async () => {
+    it('response with more fields than schema still passes', async () => {
         const TodoSchema = object({
-            userId: number(),
-            id: number(),
             completed: boolean(),
+            id: number(),
+            userId: number(),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -428,13 +439,13 @@ describe('Validation tests', () => {
     `);
     });
 
-    test('response with less fields than schema fails', async () => {
+    it('response with less fields than schema fails', async () => {
         const TodoSchema = object({
-            userId: number(),
-            id: number(),
-            title: string(),
             completed: boolean(),
             extraField: string(),
+            id: number(),
+            title: string(),
+            userId: number(),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -446,7 +457,7 @@ describe('Validation tests', () => {
             }
         );
 
-        if (!result.ok) {
+        if (result.ok === false) {
             expect(result.error).toBe(
                 'Response failed to validate against schema.'
             );
@@ -455,13 +466,13 @@ describe('Validation tests', () => {
         }
     });
 
-    test('handles schemas with non-present nullish values', async () => {
+    it('handles schemas with non-present nullish values', async () => {
         const TodoSchema = object({
-            userId: number(),
-            id: number(),
-            title: string(),
             completed: boolean(),
             extraField: nullish(string()),
+            id: number(),
+            title: string(),
+            userId: number(),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -492,10 +503,10 @@ describe('Validation tests', () => {
         'handles schemas with present nullish values',
         async () => {
             const TodoSchema = object({
-                id: number(),
-                title: string(),
                 author: string(),
                 comments: nullish(string()),
+                id: number(),
+                title: string(),
             });
 
             type Todo = Output<typeof TodoSchema>;
@@ -508,16 +519,16 @@ describe('Validation tests', () => {
                 throw new Error(result.error);
             }
 
-            expect(result.data.comments).toBe(null);
+            expect(result.data.comments).toBeNull();
         }
     );
 
     // Skip this test in CI because it uses a local server
     test.skipIf(isCi)('handles schemas with optional fields', async () => {
         const TodoSchema = object({
+            author: optional(string()),
             id: number(),
             title: string(),
-            author: optional(string()),
         });
 
         type Todo = Output<typeof TodoSchema>;
@@ -530,7 +541,7 @@ describe('Validation tests', () => {
             throw new Error(result.error);
         }
 
-        expect(result.data.author).toBe(undefined);
+        expect(result.data.author).toBeUndefined();
         expect(result.data).toMatchInlineSnapshot(`
         {
           "id": 1,
@@ -539,7 +550,7 @@ describe('Validation tests', () => {
     `);
     });
 
-    test('passing unknown to rest of schema includes all fields', async () => {
+    it('passing unknown to rest of schema includes all fields', async () => {
         const TodoSchema = object(
             {
                 id: number(),
@@ -571,7 +582,7 @@ describe('Validation tests', () => {
     `);
     });
 
-    test('passing never to rest of schema rejects when there are more fields', async () => {
+    it('passing never to rest of schema rejects when there are more fields', async () => {
         const TodoSchema = object(
             {
                 id: number(),
@@ -589,7 +600,7 @@ describe('Validation tests', () => {
             }
         );
 
-        if (!result.ok) {
+        if (result.ok === false) {
             expect(result.error).toBe(
                 'Response failed to validate against schema.'
             );

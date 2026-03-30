@@ -1,8 +1,8 @@
 import type { BaseSchema } from 'valibot';
 
-export type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export type ResponseFormat = 'json' | 'text' | 'blob';
+type ResponseFormat = 'json' | 'text' | 'blob';
 
 /**
  * Options for the Tchef function
@@ -20,7 +20,7 @@ export type ResponseFormat = 'json' | 'text' | 'blob';
  * @param retryDelayMs - Delay in milliseconds between retries (default: 100), can be 'exponential' to increase the delay exponentially with each retry starting from 1 second
  * @param validateSchema - Valibot Schema to validate the response data
  */
-export type TchefOptions = {
+interface TchefOptions {
     method?: HTTPVerb;
     body?: string;
     headers?: Record<string, string>;
@@ -33,7 +33,7 @@ export type TchefOptions = {
     retries?: number;
     retryDelayMs?: number | 'exponential';
     validateSchema?: BaseSchema;
-};
+}
 
 /**
  * Result of the Tchef function
@@ -46,6 +46,8 @@ export type TchefOptions = {
  * @param error - Error message in case of failure
  * @param statusCode - Error status code in case of failure
  */
-export type TchefResult<T> =
-    | { ok: true; data: T;  }
+type TchefResult<T> =
+    | { ok: true; data: T }
     | { ok: false; error: string; statusCode: number };
+
+export type { HTTPVerb, ResponseFormat, TchefOptions, TchefResult };
