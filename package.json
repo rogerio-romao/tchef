@@ -32,7 +32,7 @@
         "build": "run-s build:node build:types",
         "build:node": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --target=es2022 --minify --sourcemap --external:all",
         "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir dist --declarationMap --allowJs --outDir dist",
-        "commit:check": "run-s lint test:ci build",
+        "check": "run-s fmt:check lint test:ci build",
         "dev": "run-p dev:*",
         "dev:esbuild": "pnpm run build --watch",
         "dev:node": "node --watch dist/index.js",

@@ -31,14 +31,7 @@
         "eslint/no-magic-numbers": "off",
         "eslint/no-ternary": "off",
         "eslint/no-undefined": "off",
-        "eslint/sort-imports": [
-            "warn",
-            {
-                "ignoreCase": true,
-                "allowSeparatedGroups": true,
-                "memberSyntaxSortOrder": ["none", "all", "single", "multiple"]
-            }
-        ],
+        "eslint/sort-imports": "off",
         "import/no-default-export": "off",
         "import/no-named-export": "off",
         "import/no-nodejs-modules": "off",
