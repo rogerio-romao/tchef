@@ -8,20 +8,6 @@
 
 ## A better Fetch - with bells and whistles
 
-_Warning: this is a heavily wip package that is in initial stages, and also my
-first ever package. Use it at your own risk. I have made it for my own personal
-use, because at my work I am constantly writing `fetch` functions to grab data,
-and it got tiresome to do try-catch blocks all the time, and having to check for
-errors even in the try block. I also wanted the ability to have retries in case
-of error and to type the responses, so this package is the result of that._
-
-It's meant to work on Node, other JS runtimes and browsers, just assumes a
-fairly recent version, since it assumes that it has native Fetch implementation.
-Recommended Node >=21, although it may work with earlier (>18) versions, but you
-may need to set a flag on Node. It's also a modern, ESM only module, no other
-exports provided. It is written in Typescript and ships with the types, so it's
-ready to get help from your IDE on using it and autocompletion.
-
 ### Runtimes & Browser Compatibility
 
 Compatible with: ![Node.js](./src/svg/node.svg) ![Deno](./src/svg/deno.svg)
