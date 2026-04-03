@@ -32,13 +32,14 @@ The package is published both on [npm](https://www.npmjs.com/package/tchef/) and
 [jsr](https://jsr.io/@rogerio-romao/tchef/). Tested and compatible with the
 following:
 
--   Node.js
--   Deno
--   Bun
--   CloudflareWorkers
+- Node.js
+- Deno
+- Bun
+- CloudflareWorkers
 
-In browsers, it also works, you will need a bundler to be able to use ESM `import` 
+In browsers, it also works, you will need a bundler to be able to use ESM `import`
 syntax, or you can use a CDN script in your html such as this:
+
 ```html
 <script src="https://unpkg.com/tchef@0.4.14/dist/index.js"></script>
 ```
@@ -244,7 +245,7 @@ const TodoSchema = object(
         id: number(),
         title: string(),
     },
-    unknown()
+    unknown(),
 );
 
 await tchef('https://example.com/todo/1', { validateSchema: TodoSchema });
@@ -259,13 +260,13 @@ features.
 
 #### Validation feature known issues:
 
--   If you get an error when trying to use the validation feature, that it
-    cannot find Valibot, you can either try `pnpm i --shamefully-hoist`, that
-    will rebuild your node_modules folder and pull up valibot from within
-    Tchef's dependencies to the top level (recommended). Or you can install
-    Valibot on your dependencies yourself - this should also work but you will
-    have duplicated dependency and potential version mismatches.
+- If you get an error when trying to use the validation feature, that it
+  cannot find Valibot, you can either try `pnpm i --shamefully-hoist`, that
+  will rebuild your node_modules folder and pull up valibot from within
+  Tchef's dependencies to the top level (recommended). Or you can install
+  Valibot on your dependencies yourself - this should also work but you will
+  have duplicated dependency and potential version mismatches.
 
 ### Roadmap
 
--   [ ] Browser build that allows normal ESM import.
+- [ ] Browser build that allows normal ESM import.

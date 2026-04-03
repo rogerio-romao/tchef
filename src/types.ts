@@ -46,8 +46,6 @@ interface TchefOptions {
  * @param error - Error message in case of failure
  * @param statusCode - Error status code in case of failure
  */
-type TchefResult<T> =
-    | { ok: true; data: T }
-    | { ok: false; error: string; statusCode: number };
+type TchefResult<T> = { ok: true; data: T } | { ok: false; error: string; statusCode: number };
 
 export type { HTTPVerb, ResponseFormat, TchefOptions, TchefResult };

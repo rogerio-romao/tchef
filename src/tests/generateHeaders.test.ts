@@ -1,4 +1,5 @@
 import generateHeaders from '@/utils/generateHeaders.ts';
+
 import type { TchefOptions } from '@/types.ts';
 
 // oxlint-disable-next-line max-lines-per-function

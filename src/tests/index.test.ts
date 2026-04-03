@@ -2,16 +2,7 @@
 // oxlint-disable vitest/no-standalone-expect -- the skipIf(CI) trip it up
 // oxlint-disable max-lines
 
-import {
-    boolean,
-    never,
-    nullish,
-    number,
-    object,
-    optional,
-    string,
-    unknown,
-} from 'valibot';
+import { boolean, never, nullish, number, object, optional, string, unknown } from 'valibot';
 
 import tchef from '@/index.ts';
 
@@ -31,7 +22,7 @@ describe('uRL based tests', () => {
 
     it('does not crash on 404 url', async () => {
         await expect(
-            tchef('https://jsonplaceholder.typicode.com/thisisfake')
+            tchef('https://jsonplaceholder.typicode.com/thisisfake'),
         ).resolves.toStrictEqual({
             error: 'Not Found',
             ok: false,
@@ -42,9 +33,7 @@ describe('uRL based tests', () => {
 
 describe('basic fetch methods tests', () => {
     it('does a basic fetch', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/todos/1'
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1');
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -61,20 +50,17 @@ describe('basic fetch methods tests', () => {
     });
 
     it('can execute a POST request', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/posts',
-            {
-                body: JSON.stringify({
-                    body: 'bar',
-                    title: 'foo',
-                    userId: 1,
-                }),
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                },
-                method: 'POST',
-            }
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify({
+                body: 'bar',
+                title: 'foo',
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            method: 'POST',
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -91,21 +77,18 @@ describe('basic fetch methods tests', () => {
     });
 
     it('can execute a PUT request', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/posts/1',
-            {
-                body: JSON.stringify({
-                    body: 'bar',
-                    id: 1,
-                    title: 'foo',
-                    userId: 1,
-                }),
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                },
-                method: 'PUT',
-            }
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/posts/1', {
+            body: JSON.stringify({
+                body: 'bar',
+                id: 1,
+                title: 'foo',
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            method: 'PUT',
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -122,12 +105,9 @@ describe('basic fetch methods tests', () => {
     });
 
     it('can execute a DELETE request', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/posts/1',
-            {
-                method: 'DELETE',
-            }
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/posts/1', {
+            method: 'DELETE',
+        });
 
         if (!result.ok) {
             throw new Error('Request failed');
@@ -138,15 +118,13 @@ describe('basic fetch methods tests', () => {
 });
 
 describe('error handling tests', () => {
-    it('handles errors not caught by response.ok', () => {
-        expect(tchef('http://unreachable-url')).not.toThrow();
+    it('handles errors not caught by response.ok', async () => {
+        await expect(tchef('http://unreachable-url')).resolves.not.toThrow();
     });
 
     // Skip this test in CI because it uses a local server
     test.skipIf(isCi)('does not crash on receiving invalid JSON', async () => {
-        await expect(
-            tchef('http://localhost:3000/malformed')
-        ).resolves.toStrictEqual({
+        await expect(tchef('http://localhost:3000/malformed')).resolves.toStrictEqual({
             error: 'Invalid JSON',
             ok: false,
             statusCode: 422,
@@ -189,7 +167,7 @@ describe('timeout and abort tests', () => {
         await expect(
             tchef('https://httpbin.org/delay/2', {
                 timeoutSecs: 1,
-            })
+            }),
         ).resolves.toStrictEqual({
             error: 'Request timeout',
             ok: false,
@@ -204,7 +182,7 @@ describe('timeout and abort tests', () => {
         await expect(
             tchef('https://httpbin.org/delay/2', {
                 signal: controller.signal,
-            })
+            }),
         ).resolves.toStrictEqual({
             error: 'Request aborted',
             ok: false,
@@ -229,12 +207,9 @@ describe('timeout and abort tests', () => {
 
 describe('retry tests', () => {
     it('can retry a 404 request', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/thisisfake',
-            {
-                retries: 2,
-            }
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/thisisfake', {
+            retries: 2,
+        });
 
         if (!result.ok) {
             expect(result.error).toBe('Max retries reached. Not Found');
@@ -257,9 +232,7 @@ describe('retry tests', () => {
         });
 
         if (!result.ok) {
-            expect(result.error).toBe(
-                'Max retries reached. INTERNAL SERVER ERROR'
-            );
+            expect(result.error).toBe('Max retries reached. INTERNAL SERVER ERROR');
             expect(result.statusCode).toBe(500);
         }
     });
@@ -272,7 +245,7 @@ describe('retry tests', () => {
             tchef('https://httpbin.org/delay/2', {
                 retries: 2,
                 signal: controller.signal,
-            })
+            }),
         ).resolves.toStrictEqual({
             error: 'Request aborted, retries cancelled',
             ok: false,
@@ -285,7 +258,7 @@ describe('retry tests', () => {
             tchef('https://httpbin.org/delay/2', {
                 retries: 2,
                 timeoutSecs: 1,
-            })
+            }),
         ).resolves.toStrictEqual({
             error: 'Max retries reached. Request timeout',
             ok: false,
@@ -297,7 +270,7 @@ describe('retry tests', () => {
         await expect(
             tchef('http://unreachable-url', {
                 retries: 2,
-            })
+            }),
         ).resolves.toStrictEqual({
             error: 'Max retries reached. fetch failed',
             ok: false,
@@ -309,7 +282,7 @@ describe('retry tests', () => {
 describe('generic type tests', () => {
     it('can type the response 1', async () => {
         const result = await tchef<{ userId: number }>(
-            'https://jsonplaceholder.typicode.com/todos/1'
+            'https://jsonplaceholder.typicode.com/todos/1',
         );
 
         if (!result.ok) {
@@ -327,9 +300,7 @@ describe('generic type tests', () => {
             completed: boolean;
         }
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1'
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1');
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -339,9 +310,7 @@ describe('generic type tests', () => {
     });
 
     it('not passing generic gives unknown', async () => {
-        const result = await tchef(
-            'https://jsonplaceholder.typicode.com/todos/1'
-        );
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1');
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -363,12 +332,9 @@ describe('validation tests', () => {
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -394,17 +360,12 @@ describe('validation tests', () => {
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (result.ok === false) {
-            expect(result.error).toBe(
-                'Response failed to validate against schema.'
-            );
+            expect(result.error).toBe('Response failed to validate against schema.');
         } else {
             throw new Error('Should have failed validation');
         }
@@ -419,12 +380,9 @@ describe('validation tests', () => {
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -450,17 +408,12 @@ describe('validation tests', () => {
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (result.ok === false) {
-            expect(result.error).toBe(
-                'Response failed to validate against schema.'
-            );
+            expect(result.error).toBe('Response failed to validate against schema.');
         } else {
             throw new Error('Should have failed validation');
         }
@@ -477,12 +430,9 @@ describe('validation tests', () => {
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -499,29 +449,26 @@ describe('validation tests', () => {
     });
 
     // Skip this test in CI because it uses a local server
-    test.skipIf(isCi)(
-        'handles schemas with present nullish values',
-        async () => {
-            const TodoSchema = object({
-                author: string(),
-                comments: nullish(string()),
-                id: number(),
-                title: string(),
-            });
+    test.skipIf(isCi)('handles schemas with present nullish values', async () => {
+        const TodoSchema = object({
+            author: string(),
+            comments: nullish(string()),
+            id: number(),
+            title: string(),
+        });
 
-            type Todo = Output<typeof TodoSchema>;
+        type Todo = Output<typeof TodoSchema>;
 
-            const result = await tchef<Todo>('http://localhost:3000/nullish', {
-                validateSchema: TodoSchema,
-            });
+        const result = await tchef<Todo>('http://localhost:3000/nullish', {
+            validateSchema: TodoSchema,
+        });
 
-            if (!result.ok) {
-                throw new Error(result.error);
-            }
-
-            expect(result.data.comments).toBeNull();
+        if (!result.ok) {
+            throw new Error(result.error);
         }
-    );
+
+        expect(result.data.comments).toBeNull();
+    });
 
     // Skip this test in CI because it uses a local server
     test.skipIf(isCi)('handles schemas with optional fields', async () => {
@@ -556,17 +503,14 @@ describe('validation tests', () => {
                 id: number(),
                 title: string(),
             },
-            unknown()
+            unknown(),
         );
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (!result.ok) {
             throw new Error(result.error);
@@ -588,22 +532,17 @@ describe('validation tests', () => {
                 id: number(),
                 title: string(),
             },
-            never()
+            never(),
         );
 
         type Todo = Output<typeof TodoSchema>;
 
-        const result = await tchef<Todo>(
-            'https://jsonplaceholder.typicode.com/todos/1',
-            {
-                validateSchema: TodoSchema,
-            }
-        );
+        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
 
         if (result.ok === false) {
-            expect(result.error).toBe(
-                'Response failed to validate against schema.'
-            );
+            expect(result.error).toBe('Response failed to validate against schema.');
         } else {
             throw new Error('Should have failed validation');
         }

@@ -5,18 +5,15 @@ import type { TchefOptions } from '@/types';
 export default function retryDelayTime(
     defaultOptions: TchefOptions,
     currentRetries: number,
-    options: TchefOptions = {}
+    options: TchefOptions = {},
 ): number {
     const hasRetryDelay =
-        (typeof options.retryDelayMs === 'number' &&
-            options.retryDelayMs > 0) ||
+        (typeof options.retryDelayMs === 'number' && options.retryDelayMs > 0) ||
         options.retryDelayMs === 'exponential';
 
     if (!hasRetryDelay) {
         const defaultDelayType =
-            defaultOptions.retryDelayMs === 'exponential'
-                ? 'exponential'
-                : 'fixed';
+            defaultOptions.retryDelayMs === 'exponential' ? 'exponential' : 'fixed';
 
         if (defaultDelayType === 'fixed') {
             // should be a number already, making TS happy
@@ -27,8 +24,7 @@ export default function retryDelayTime(
         return 1000 * 2 ** (currentRetries + 1);
     }
 
-    const optionsDelayType =
-        options.retryDelayMs === 'exponential' ? 'exponential' : 'fixed';
+    const optionsDelayType = options.retryDelayMs === 'exponential' ? 'exponential' : 'fixed';
 
     if (optionsDelayType === 'fixed') {
         // should be a number already, just making TS happy

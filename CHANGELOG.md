@@ -2,7 +2,6 @@
 
 ## v0.3.1
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -72,7 +71,6 @@
 
 ## v0.2.1
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -135,7 +133,6 @@
 
 ## v0.1.6
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -196,7 +193,6 @@
 
 ## v0.1.5
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -254,7 +250,6 @@
 
 ## v0.1.4
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -303,7 +298,6 @@
 
 ## v0.1.3
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -351,7 +345,6 @@
 
 ## v0.0.11
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -396,7 +389,6 @@
 
 ## v0.0.10
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -439,7 +431,6 @@
 
 ## v0.0.9
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -478,7 +469,6 @@
 
 ## v0.0.8
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -515,7 +505,6 @@
 
 ## v0.0.7
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -550,7 +539,6 @@
 
 ## v0.0.6
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -580,7 +568,6 @@
 
 ## v0.0.5
 
-
 ### 🚀 Enhancements
 
 - Update CHANGELOG.md and package.json for version 0.0.4 ([cde0e75](https://github.com/rogerio-romao/tchef/commit/cde0e75))
@@ -609,52 +596,52 @@
 
 ## v0.0.4
 
--   Remove pre-commit hook (manual command available to bump in package.json)
+- Remove pre-commit hook (manual command available to bump in package.json)
 
 ### 📦 Build
 
--   Add pre-commit hook for changelogen
-    ([e794674](https://github.com/rogerio-romao/tchef/commit/e794674))
+- Add pre-commit hook for changelogen
+  ([e794674](https://github.com/rogerio-romao/tchef/commit/e794674))
 
 ### 🏡 Chore
 
--   Template cleanup
-    ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
--   Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
--   Enforce Node version
-    ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
--   Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
+- Template cleanup
+  ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
+- Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
+- Enforce Node version
+  ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
+- Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
 
 ### ❤️ Contributors
 
--   Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))
+- Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))
 
 ## v0.0.3
 
 ### 🏡 Chore
 
--   Template cleanup
-    ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
--   Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
--   Enforce Node version
-    ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
--   Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
+- Template cleanup
+  ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
+- Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
+- Enforce Node version
+  ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
+- Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
 
 ### ❤️ Contributors
 
--   Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))
+- Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))
 
 ## v0.0.2
 
 ### 🏡 Chore
 
--   Template cleanup
-    ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
--   Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
--   Enforce Node version
-    ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
--   Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
+- Template cleanup
+  ([60b5e54](https://github.com/rogerio-romao/tchef/commit/60b5e54))
+- Template cleanup ([#8](https://github.com/rogerio-romao/tchef/pull/8))
+- Enforce Node version
+  ([0112469](https://github.com/rogerio-romao/tchef/commit/0112469))
+- Enforce Node version ([#13](https://github.com/rogerio-romao/tchef/pull/13))
 
 ### ❤️ Contributors
 
--   Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))
+- Rogerio Romao ([@rogerio-romao](http://github.com/rogerio-romao))

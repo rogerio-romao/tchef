@@ -1,10 +1,7 @@
 // types
 import type { TchefOptions } from '@/types';
 
-export default function generateSearchParams(
-    url: URL,
-    options: TchefOptions
-): URL {
+export default function generateSearchParams(url: URL, options: TchefOptions): URL {
     const urlHasSearchParams = url.searchParams.size > 0;
 
     if (!options.searchParams) {

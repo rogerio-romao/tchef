@@ -23,7 +23,7 @@
         "lib": ["es2022", "DOM"], // if running on dom use ["es2022", "dom", "dom.iterable"]
         "outDir": "./dist", // if you're using a bundler, set this to the output directory of your bundler
         "rootDir": "./src", // explicitly set rootDir to fix TS5011 error
-        "types": ["vitest/globals"]
+        "types": ["vitest/globals", "node"]
     },
     "include": ["src/**/*"]
 }

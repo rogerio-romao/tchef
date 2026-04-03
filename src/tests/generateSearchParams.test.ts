@@ -1,4 +1,5 @@
 import generateSearchParams from '@/utils/generateSearchParams.ts';
+
 import type { TchefOptions } from '@/types';
 
 describe('generate search params helper function', () => {

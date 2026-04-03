@@ -4,7 +4,7 @@ import type { TchefOptions } from '@/types';
 // oxlint-disable-next-line max-statements
 export default function generateHeaders(
     src: TchefOptions,
-    target: TchefOptions
+    target: TchefOptions,
 ): Record<string, string> {
     const conditionalHeaders: Record<string, string> = {};
 
@@ -22,18 +22,15 @@ export default function generateHeaders(
         if (target.headers?.['Content-type'] === undefined) {
             switch (target.responseFormat) {
                 case 'text': {
-                    conditionalHeaders['Content-type'] =
-                        'text/plain; charset=UTF-8';
+                    conditionalHeaders['Content-type'] = 'text/plain; charset=UTF-8';
                     break;
                 }
                 case 'blob': {
-                    conditionalHeaders['Content-type'] =
-                        'application/octet-stream';
+                    conditionalHeaders['Content-type'] = 'application/octet-stream';
                     break;
                 }
                 default: {
-                    conditionalHeaders['Content-type'] =
-                        'application/json; charset=UTF-8';
+                    conditionalHeaders['Content-type'] = 'application/json; charset=UTF-8';
                     break;
                 }
             }

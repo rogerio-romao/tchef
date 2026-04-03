@@ -1,6 +1,4 @@
 {
-    "oxc.enable.oxlint": true,
-    "editor.codeActionsOnSave": {
-        "source.sortImports": "never"
-    }
+    "oxc.enable": true,
+    "editor.defaultFormatter": "oxc.oxc-vscode"
 }

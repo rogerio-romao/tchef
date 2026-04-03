@@ -27,10 +27,7 @@
         "eslint/max-lines-per-function": ["warn", 100],
         "eslint/max-params": ["warn", 4],
         "eslint/no-continue": "off",
-        "eslint/no-duplicate-imports": [
-            "error",
-            { "allowSeparateTypeImports": true }
-        ],
+        "eslint/no-duplicate-imports": ["error", { "allowSeparateTypeImports": true }],
         "eslint/no-magic-numbers": "off",
         "eslint/no-ternary": "off",
         "eslint/no-undefined": "off",
@@ -44,6 +41,7 @@
         ],
         "import/no-default-export": "off",
         "import/no-named-export": "off",
+        "import/no-nodejs-modules": "off",
         "oxc/no-async-await": "off",
         "oxc/no-optional-chaining": "off",
         "oxc/no-rest-spread-properties": "off",

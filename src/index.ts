@@ -55,7 +55,7 @@ export default async function tchef<T = unknown>(
     url: string,
     options: TchefOptions = {},
     _currentRetries = 0,
-    _transitiveErrorMessage = ''
+    _transitiveErrorMessage = '',
 ): Promise<TchefResult<T>> {
     // Check if fetch is supported
     if (typeof globalThis.fetch !== 'function') {
@@ -80,24 +80,17 @@ export default async function tchef<T = unknown>(
     };
 
     // Retries
-    const hasRetries =
-        typeof options.retries === 'number' && options.retries > 0;
+    const hasRetries = typeof options.retries === 'number' && options.retries > 0;
 
     // Delay between retries
-    const retryWaitTime = retryDelayTime(
-        defaultOptions,
-        _currentRetries,
-        options
-    );
+    const retryWaitTime = retryDelayTime(defaultOptions, _currentRetries, options);
 
     // this passes the error message from the previous attempt to the next one
     let transitiveError = '';
 
     // Check if the request should be retried
     if (
-        (hasRetries &&
-            typeof options.retries === 'number' &&
-            _currentRetries <= options.retries) ||
+        (hasRetries && typeof options.retries === 'number' && _currentRetries <= options.retries) ||
         _currentRetries === 0
     ) {
         // Check if the URL is valid
@@ -138,12 +131,7 @@ export default async function tchef<T = unknown>(
                     // Retry the request
                     await sleep(retryWaitTime);
 
-                    return tchef(
-                        url,
-                        options,
-                        _currentRetries + 1,
-                        transitiveError
-                    );
+                    return tchef(url, options, _currentRetries + 1, transitiveError);
                 }
 
                 return {
@@ -158,10 +146,7 @@ export default async function tchef<T = unknown>(
                 switch (mergedOptions.responseFormat) {
                     case 'json': {
                         if (options.validateSchema !== undefined) {
-                            const result = safeParse(
-                                options.validateSchema,
-                                await response.json()
-                            );
+                            const result = safeParse(options.validateSchema, await response.json());
                             return result.success
                                 ? {
                                       data: result.output as T,
@@ -203,12 +188,7 @@ export default async function tchef<T = unknown>(
                             // Retry the request
                             await sleep(retryWaitTime);
 
-                            return tchef(
-                                url,
-                                options,
-                                _currentRetries + 1,
-                                transitiveError
-                            );
+                            return tchef(url, options, _currentRetries + 1, transitiveError);
                         }
 
                         return {
@@ -226,12 +206,7 @@ export default async function tchef<T = unknown>(
                             // Retry the request
                             await sleep(retryWaitTime);
 
-                            return tchef(
-                                url,
-                                options,
-                                _currentRetries + 1,
-                                transitiveError
-                            );
+                            return tchef(url, options, _currentRetries + 1, transitiveError);
                         }
 
                         return {
@@ -249,12 +224,7 @@ export default async function tchef<T = unknown>(
                             // Retry the request
                             await sleep(retryWaitTime);
 
-                            return tchef(
-                                url,
-                                options,
-                                _currentRetries + 1,
-                                transitiveError
-                            );
+                            return tchef(url, options, _currentRetries + 1, transitiveError);
                         }
 
                         return {
@@ -272,12 +242,7 @@ export default async function tchef<T = unknown>(
                             // Retry the request
                             await sleep(retryWaitTime);
 
-                            return tchef(
-                                url,
-                                options,
-                                _currentRetries + 1,
-                                transitiveError
-                            );
+                            return tchef(url, options, _currentRetries + 1, transitiveError);
                         }
 
                         return {
@@ -292,17 +257,12 @@ export default async function tchef<T = unknown>(
             // Handle abort errors
             if (error instanceof DOMException && error.name === 'AbortError') {
                 return {
-                    error: `Request aborted${
-                        hasRetries ? ', retries cancelled' : ''
-                    }`,
+                    error: `Request aborted${hasRetries ? ', retries cancelled' : ''}`,
                     ok: false,
                     statusCode: 499,
                 };
             }
-            if (
-                error instanceof DOMException &&
-                error.name === 'TimeoutError'
-            ) {
+            if (error instanceof DOMException && error.name === 'TimeoutError') {
                 if (hasRetries) {
                     // store the error message
                     transitiveError = '408 - Request timeout';
@@ -310,12 +270,7 @@ export default async function tchef<T = unknown>(
                     // Retry the request
                     await sleep(retryWaitTime);
 
-                    return tchef(
-                        url,
-                        options,
-                        _currentRetries + 1,
-                        transitiveError
-                    );
+                    return tchef(url, options, _currentRetries + 1, transitiveError);
                 }
 
                 return { error: 'Request timeout', ok: false, statusCode: 408 };
@@ -329,12 +284,7 @@ export default async function tchef<T = unknown>(
                     // Retry the request
                     await sleep(retryWaitTime);
 
-                    return tchef(
-                        url,
-                        options,
-                        _currentRetries + 1,
-                        transitiveError
-                    );
+                    return tchef(url, options, _currentRetries + 1, transitiveError);
                 }
 
                 return { error: error.message, ok: false, statusCode: 500 };
@@ -347,12 +297,7 @@ export default async function tchef<T = unknown>(
                 // Retry the request
                 await sleep(retryWaitTime);
 
-                return tchef(
-                    url,
-                    options,
-                    _currentRetries + 1,
-                    transitiveError
-                );
+                return tchef(url, options, _currentRetries + 1, transitiveError);
             }
 
             return { error: 'Network Error', ok: false, statusCode: 500 };
