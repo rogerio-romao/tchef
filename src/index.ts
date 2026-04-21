@@ -69,9 +69,6 @@ export default async function tchef<T = unknown>(
     const defaultOptions: TchefOptions = {
         cacheMaxAge: 60,
         cacheType: 'private',
-        headers: {
-            Accept: 'application/json',
-        },
         method: 'GET',
         responseFormat: 'json',
         retries: 0,

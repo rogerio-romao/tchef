@@ -23,6 +23,7 @@
     "rules": {
         "eslint/capitalized-comments": "off",
         "eslint/id-length": "off",
+        "eslint/func-style": ["warn", "declaration", { "allowArrowFunctions": true }],
         "eslint/max-depth": ["warn", 5],
         "eslint/max-lines-per-function": ["warn", 100],
         "eslint/max-params": ["warn", 4],

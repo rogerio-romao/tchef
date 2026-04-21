@@ -2,7 +2,7 @@ import generateHeaders from '@/utils/generateHeaders.ts';
 
 import type { TchefOptions } from '@/types.ts';
 
-// oxlint-disable-next-line max-lines-per-function
+// oxlint-disable-next-line max-lines-per-function, max-statements
 describe('generate headers helper function', () => {
     it('generateHeaders', () => {
         const defaultOptions: TchefOptions = {
@@ -22,9 +22,10 @@ describe('generate headers helper function', () => {
         const result = generateHeaders(defaultOptions, options);
 
         expect(result).toStrictEqual({
+            Accept: 'application/json',
             Authorization: 'Bearer token',
-            'Content-type': 'application/json; charset=UTF-8',
-            'x-test': 'bar',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'X-Test': 'bar',
         });
     });
 
@@ -44,7 +45,7 @@ describe('generate headers helper function', () => {
 
         expect(result).toStrictEqual({
             Accept: 'text/*',
-            'Content-type': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json; charset=UTF-8',
         });
     });
 
@@ -64,7 +65,7 @@ describe('generate headers helper function', () => {
 
         expect(result).toStrictEqual({
             Accept: '*/*',
-            'Content-type': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json; charset=UTF-8',
         });
     });
 
@@ -84,7 +85,7 @@ describe('generate headers helper function', () => {
 
         expect(result).toStrictEqual({
             Accept: 'application/json',
-            'Content-type': 'text/plain; charset=UTF-8',
+            'Content-Type': 'text/plain; charset=UTF-8',
         });
     });
 
@@ -104,7 +105,7 @@ describe('generate headers helper function', () => {
 
         expect(result).toStrictEqual({
             Accept: 'application/json',
-            'Content-type': 'application/octet-stream',
+            'Content-Type': 'application/octet-stream',
         });
     });
 
@@ -167,6 +168,74 @@ describe('generate headers helper function', () => {
         expect(result).toStrictEqual({
             Accept: 'application/json',
             'Cache-Control': 'public, max-age=60',
+        });
+    });
+
+    it('does not override Content-Type when user passes content-type (all lowercase)', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            headers: {
+                'content-type': 'application/xml',
+            },
+            method: 'POST',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result).toStrictEqual({
+            'Content-Type': 'application/xml',
+        });
+    });
+
+    it('does not override Content-Type when user passes Content-type (lowercase t)', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            headers: {
+                'Content-type': 'application/xml',
+            },
+            method: 'POST',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result).toStrictEqual({
+            'Content-Type': 'application/xml',
+        });
+    });
+
+    it('does not override Content-Type when user passes CONTENT-TYPE (all caps)', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            headers: {
+                'CONTENT-TYPE': 'application/xml',
+            },
+            method: 'POST',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result).toStrictEqual({
+            'Content-Type': 'application/xml',
+        });
+    });
+
+    it('does not override Accept when user passes accept (all lowercase)', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            headers: {
+                accept: 'application/json',
+            },
+            responseFormat: 'text',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result).toStrictEqual({
+            Accept: 'application/json',
         });
     });
 });
