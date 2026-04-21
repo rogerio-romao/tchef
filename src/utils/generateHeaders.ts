@@ -40,7 +40,10 @@ export default function generateHeaders(
     }
 
     if (target.method && target.method !== 'GET') {
-        if (normalizedTargetHeaders?.['Content-Type'] === undefined) {
+        if (
+            normalizedTargetHeaders?.['Content-Type'] === undefined &&
+            normalizedSrcHeaders?.['Content-Type'] === undefined
+        ) {
             switch (target.responseFormat) {
                 case 'text': {
                     conditionalHeaders['Content-Type'] = 'text/plain; charset=UTF-8';
