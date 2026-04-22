@@ -2,11 +2,18 @@
 // oxlint-disable vitest/no-standalone-expect -- the skipIf(CI) trip it up
 // oxlint-disable max-lines
 
-import { boolean, never, nullish, number, object, optional, string, unknown } from 'valibot';
+import {
+    boolean,
+    looseObject,
+    nullish,
+    number,
+    object,
+    optional,
+    strictObject,
+    string,
+} from 'valibot';
 
 import tchef from '@/index.ts';
-
-import type { Output } from 'valibot';
 
 // oxlint-disable-next-line node/no-process-env
 const isCi = process.env.CI === 'true';
@@ -320,7 +327,7 @@ describe('generic type tests', () => {
     });
 });
 
-// oxlint-disable-next-line max-lines-per-function
+// oxlint-disable-next-line max-lines-per-function, max-statements -- this is just more convenient to have all validation tests together
 describe('validation tests', () => {
     it('can validate the response', async () => {
         const TodoSchema = object({
@@ -330,9 +337,7 @@ describe('validation tests', () => {
             userId: number(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
@@ -358,14 +363,13 @@ describe('validation tests', () => {
             userId: string(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
         if (result.ok === false) {
-            expect(result.error).toBe('Response failed to validate against schema.');
+            expect(result.error).toMatch(/^Validation failed:/);
+            expect(result.error).toContain('completed');
         } else {
             throw new Error('Should have failed validation');
         }
@@ -378,9 +382,7 @@ describe('validation tests', () => {
             userId: number(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
@@ -406,14 +408,13 @@ describe('validation tests', () => {
             userId: number(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
         if (result.ok === false) {
-            expect(result.error).toBe('Response failed to validate against schema.');
+            expect(result.error).toMatch(/^Validation failed:/);
+            expect(result.error).toContain('extraField');
         } else {
             throw new Error('Should have failed validation');
         }
@@ -428,9 +429,7 @@ describe('validation tests', () => {
             userId: number(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
@@ -457,9 +456,7 @@ describe('validation tests', () => {
             title: string(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('http://localhost:3000/nullish', {
+        const result = await tchef('http://localhost:3000/nullish', {
             validateSchema: TodoSchema,
         });
 
@@ -478,9 +475,7 @@ describe('validation tests', () => {
             title: string(),
         });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('http://localhost:3000/optional', {
+        const result = await tchef('http://localhost:3000/optional', {
             validateSchema: TodoSchema,
         });
 
@@ -498,17 +493,12 @@ describe('validation tests', () => {
     });
 
     it('passing unknown to rest of schema includes all fields', async () => {
-        const TodoSchema = object(
-            {
-                id: number(),
-                title: string(),
-            },
-            unknown(),
-        );
+        const TodoSchema = looseObject({
+            id: number(),
+            title: string(),
+        });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
@@ -527,22 +517,59 @@ describe('validation tests', () => {
     });
 
     it('passing never to rest of schema rejects when there are more fields', async () => {
-        const TodoSchema = object(
-            {
-                id: number(),
-                title: string(),
-            },
-            never(),
-        );
+        const TodoSchema = strictObject({
+            id: number(),
+            title: string(),
+        });
 
-        type Todo = Output<typeof TodoSchema>;
-
-        const result = await tchef<Todo>('https://jsonplaceholder.typicode.com/todos/1', {
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
             validateSchema: TodoSchema,
         });
 
         if (result.ok === false) {
-            expect(result.error).toBe('Response failed to validate against schema.');
+            expect(result.error).toMatch(/^Validation failed:/);
+        } else {
+            throw new Error('Should have failed validation');
+        }
+    });
+
+    it('validation error includes up to 3 issues with (+N more) suffix when more exist', async () => {
+        // Schema with 5 wrong field types — response has boolean/number/string/number, so all 5 fail
+        const TodoSchema = object({
+            completed: string(),
+            extraField: number(),
+            id: boolean(),
+            title: number(),
+            userId: string(),
+        });
+
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
+            validateSchema: TodoSchema,
+        });
+
+        if (result.ok === false) {
+            expect(result.error).toMatch(/^Validation failed:/);
+            expect(result.error).toContain('(+');
+        } else {
+            throw new Error('Should have failed validation');
+        }
+    });
+
+    it('retryOnValidationFail retries on schema mismatch and eventually returns max retries error', async () => {
+        // Schema intentionally wrong — will always fail against the real response
+        const TodoSchema = object({
+            completed: string(),
+            id: boolean(),
+        });
+
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
+            retries: 2,
+            retryOnValidationFail: true,
+            validateSchema: TodoSchema,
+        });
+
+        if (result.ok === false) {
+            expect(result.error).toMatch(/^Max retries reached\./);
         } else {
             throw new Error('Should have failed validation');
         }

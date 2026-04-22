@@ -10,6 +10,8 @@
 
 ### Runtimes & Browser Compatibility
 
+Zero runtime dependencies.
+
 Compatible with: ![Node.js](./src/svg/node.svg) ![Deno](./src/svg/deno.svg)
 ![Bun](./src/svg/bun.svg)
 ![Cloudflare Workers](./src/svg/cloudflare-workers.svg)
@@ -27,7 +29,7 @@ In browsers, it also works, you will need a bundler to be able to use ESM `impor
 syntax, or you can use a CDN script in your html such as this:
 
 ```html
-<script src="https://unpkg.com/tchef@0.4.14/dist/index.js"></script>
+<script src="https://unpkg.com/tchef@0.5.0/dist/index.js"></script>
 ```
 
 ### Installation & Basic Usage
@@ -98,15 +100,13 @@ Default options:
 ```js
 {
     method: 'GET',
-    headers: {
-        Accept: 'application/json',
-    },
     responseFormat: 'json',
     cacheType: 'private',
     cacheMaxAge: 60,
     timeoutSecs: 'no-limit',
     retries: 0,
     retryDelayMs: 100,
+    retryOnValidationFail: false,
 };
 ```
 
@@ -180,29 +180,32 @@ passed, the response will default to type `unknown`.
 
 ✔︎ **Validating JSON payloads.**
 
-We use [Valibot](https://valibot.dev/) for validation. It's beyond the scope for
-us to explain how that works in detail, so follow the link for docs and guides.
-But it's a very lightweight and tree-shakeable library similar to Zod and
-others. By default Tchef will not validate payloads. To do that, you have to set
-up your expected schema using Valibot, then pass that in the options as such:
-`{ validateSchema: SomeValidValibotSchema }`. A more detailed example here:
+Tchef accepts any schema that implements the [Standard Schema](https://standardschema.dev/)
+spec — that includes [Valibot](https://valibot.dev/) (≥1.0), [Zod](https://zod.dev/) (≥3.24),
+[ArkType](https://arktype.io/), and others. Bring whichever you already use; tchef has no
+runtime dependency on any of them.
+
+By default tchef will not validate payloads. To enable validation, build a schema with
+your chosen library and pass it as `validateSchema`:
 
 ```ts
+// Example using Valibot — any Standard Schema-compliant library works the same way
+import { object, number, string, boolean } from 'valibot';
+
 const TodoSchema = object({
-    userId: number(),
+    completed: boolean(),
     id: number(),
     title: string(),
-    completed: boolean(),
+    userId: number(),
 });
 
 const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
     validateSchema: TodoSchema,
 });
-```
 
-So, the only thing you need to have the payload validated is that. If you don't
-set the validateSchema property in the options, there is no validation. Although
-you can still use a generic as detailed above on this document.
+// result.data is automatically typed as { completed: boolean; id: number; title: string; userId: number }
+// No need to pass a <T> generic — the schema drives the type.
+```
 
 So, there are 3 levels to the security you have about your response. At the most
 basic, with no validation or generic, the response data will be typed as
@@ -220,39 +223,36 @@ still validate correctly (as long as those 5 or 6 were correct), and the return
 data will be stripped of the fields not in the schema, giving you back just what
 you need, a la GraphQL! 🔥
 
-That is the default behaviour. You can also make it fail validation if there are
-more fields than your schema has, or still include those extra fields in the
-returned data instead of stripping them. The only change needed for this is on
-your Valibot schema. Example for including the extra fields:
+That is the default behaviour — it is controlled entirely by your schema library.
+Check your library's docs for how to configure passthrough (include extra fields)
+or strict (reject extra fields) behaviour.
+
+#### Validation errors
+
+On validation failure, tchef returns:
 
 ```ts
-const TodoSchema = object(
-    {
-        id: number(),
-        title: string(),
-    },
-    unknown(),
-);
-
-await tchef('https://example.com/todo/1', { validateSchema: TodoSchema });
+{ ok: false, error: 'Validation failed: <issues>', statusCode: 409 }
 ```
 
-The key is the `unknown()` call on the second argument - this will pass through
-the extra fields. If you set it to `never()` instead, validation will error out
-and tchef will return
-`{ ok: false, error: 'Response failed to validate against schema.', statusCode: 409 }`.
-Again, check [Valibot](https://valibot.dev/) for more information on it's
-features.
+The error string includes up to 3 issues from the schema, formatted as `path: message`,
+with `(+N more)` appended if there are additional issues beyond the first 3.
 
-#### Validation feature known issues:
+#### Retrying on validation failure
 
-- If you get an error when trying to use the validation feature, that it
-  cannot find Valibot, you can either try `pnpm i --shamefully-hoist`, that
-  will rebuild your node_modules folder and pull up valibot from within
-  Tchef's dependencies to the top level (recommended). Or you can install
-  Valibot on your dependencies yourself - this should also work but you will
-  have duplicated dependency and potential version mismatches.
+By default, validation failures are not retried (they are usually deterministic — the
+server returned the wrong shape). If you have a flaky endpoint that occasionally returns
+malformed payloads, you can opt in:
+
+```ts
+const result = await tchef('https://example.com/data', {
+    validateSchema: MySchema,
+    retries: 3,
+    retryOnValidationFail: true,
+});
+```
 
 ### Roadmap
 
-- [ ] Browser build that allows normal ESM import.
+- Caching options for browser and Node.js runtimes.
+- Support for more response formats, like formData, arrayBuffer, etc.

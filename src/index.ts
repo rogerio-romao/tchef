@@ -1,16 +1,14 @@
 // oxlint-disable max-lines
 
-// packages
-import { safeParse } from 'valibot';
-
 // utils
+import formatValidationError from './utils/formatValidationError.ts';
 import generateHeaders from './utils/generateHeaders.ts';
 import generateSearchParams from './utils/generateSearchParams.ts';
 import retryDelayTime from './utils/retryDelayTime.ts';
 import sleep from './utils/sleep.ts';
 
 // types
-import type { TchefOptions, TchefResult } from './types';
+import type { InferOutput, StandardSchemaV1, TchefOptions, TchefResult } from './types';
 
 /**
  * Tchef wraps the fetch API with additional features like retries, validation, and more.
@@ -50,13 +48,27 @@ import type { TchefOptions, TchefResult } from './types';
  * console.log(result.data.userId);
  * ```
  */
-// oxlint-disable-next-line max-lines-per-function, complexity, max-statements
+// Overload: schema present — result type inferred from schema, no <T> needed at call site
+export default async function tchef<S extends StandardSchemaV1>(
+    url: string,
+    options: TchefOptions<S> & { validateSchema: S },
+    _currentRetries?: number,
+    _transitiveErrorMessage?: string,
+): Promise<TchefResult<InferOutput<S>>>;
+// Overload: no schema — caller supplies <T> explicitly (defaults to unknown)
 export default async function tchef<T = unknown>(
+    url: string,
+    options?: TchefOptions & { validateSchema?: undefined },
+    _currentRetries?: number,
+    _transitiveErrorMessage?: string,
+): Promise<TchefResult<T>>;
+// oxlint-disable-next-line max-lines-per-function, complexity, max-statements
+export default async function tchef(
     url: string,
     options: TchefOptions = {},
     _currentRetries = 0,
     _transitiveErrorMessage = '',
-): Promise<TchefResult<T>> {
+): Promise<TchefResult<unknown>> {
     // Check if fetch is supported
     if (typeof globalThis.fetch !== 'function') {
         return {
@@ -73,6 +85,7 @@ export default async function tchef<T = unknown>(
         responseFormat: 'json',
         retries: 0,
         retryDelayMs: 100,
+        retryOnValidationFail: false,
         timeoutSecs: 'no-limit',
     };
 
@@ -142,29 +155,31 @@ export default async function tchef<T = unknown>(
             try {
                 switch (mergedOptions.responseFormat) {
                     case 'json': {
-                        if (options.validateSchema !== undefined) {
-                            const result = safeParse(options.validateSchema, await response.json());
-                            return result.success
-                                ? {
-                                      data: result.output as T,
-                                      ok: true,
-                                  }
-                                : {
-                                      error: 'Response failed to validate against schema.',
-                                      ok: false,
-                                      statusCode: 409,
-                                  };
+                        if (options.validateSchema === undefined) {
+                            const data = await response.json();
+                            return { data, ok: true };
                         }
-                        const data = (await response.json()) as T;
-                        return { data, ok: true };
+                        const body = await response.json();
+                        const schema = options.validateSchema as StandardSchemaV1;
+                        const validated = await schema['~standard'].validate(body);
+                        if (validated.issues === undefined) {
+                            return { data: validated.value, ok: true };
+                        }
+                        const errorString = formatValidationError(validated.issues);
+                        if (options.retryOnValidationFail === true && hasRetries) {
+                            transitiveError = `409 - ${errorString}`;
+                            await sleep(retryWaitTime);
+                            return tchef(url, options, _currentRetries + 1, transitiveError);
+                        }
+                        return { error: errorString, ok: false, statusCode: 409 };
                     }
                     case 'text': {
                         const text = await response.text();
-                        return { data: text as unknown as T, ok: true };
+                        return { data: text, ok: true };
                     }
                     case 'blob': {
                         const blob = await response.blob();
-                        return { data: blob as unknown as T, ok: true };
+                        return { data: blob, ok: true };
                     }
                     default: {
                         return {
@@ -311,4 +326,9 @@ export default async function tchef<T = unknown>(
     }
 }
 
-export { type TchefOptions, type TchefResult } from './types.ts';
+export {
+    type InferOutput,
+    type StandardSchemaV1,
+    type TchefOptions,
+    type TchefResult,
+} from './types.ts';
