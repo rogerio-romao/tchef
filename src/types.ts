@@ -28,7 +28,7 @@ type InferOutput<S extends StandardSchemaV1> = NonNullable<S['~standard']['types
  * Options for the Tchef function
  *
  * @param method - HTTP method to use (default: 'GET') valid values are 'GET', 'POST', 'PUT', 'DELETE'
- * @param body - Body to send in the request
+ * @param body - Body to send in the request. Accepts a string or FormData for multipart/form-data requests. Ignored on GET requests.
  * @param headers - Headers to send in the request
  * @param responseFormat - Format of the response (default: 'json') valid values are 'json', 'text', 'blob'
  * @param cacheType - Cache type header to use (default: 'no-cache') valid values are 'no-cache', 'private', 'public'
@@ -43,7 +43,7 @@ type InferOutput<S extends StandardSchemaV1> = NonNullable<S['~standard']['types
  */
 interface TchefOptions<S extends StandardSchemaV1 | undefined = undefined> {
     method?: HTTPVerb;
-    body?: string;
+    body?: string | FormData;
     headers?: Record<string, string>;
     responseFormat?: ResponseFormat;
     cacheType?: 'no-cache' | 'private' | 'public';

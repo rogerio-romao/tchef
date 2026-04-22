@@ -127,6 +127,12 @@ export default async function tchef(
                 }),
         };
 
+        // Strip body for GET requests — HTTP spec does not allow bodies on GET requests
+        // and behaviour varies across environments
+        if (mergedOptions.method === 'GET') {
+            delete mergedOptions.body;
+        }
+
         // Make the request
         try {
             const response = await fetch(urlWithParams, {
