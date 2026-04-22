@@ -2,6 +2,15 @@
 // types
 import type { TchefOptions } from '@/types';
 
+/**
+ * Calculates the delay time before the next retry attempt based on the provided options and current retry count.
+ * Supports both fixed and exponential backoff strategies.
+ *
+ * @param { TchefOptions } defaultOptions - The default options that may contain retry delay settings.
+ * @param { number } currentRetries - The current number of retry attempts that have been made.
+ * @param { TchefOptions } [options] - The specific options for the current request that may override default retry delay settings.
+ * @returns { number } The calculated delay time in milliseconds before the next retry attempt.
+ */
 export default function retryDelayTime(
     defaultOptions: TchefOptions,
     currentRetries: number,

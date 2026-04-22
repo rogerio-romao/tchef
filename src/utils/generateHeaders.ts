@@ -1,6 +1,13 @@
 // types
 import type { TchefOptions } from '@/types';
 
+/**
+ * Normalizes a header key to standard HTTP header capitalization.
+ * E.g., "content-type" becomes "Content-Type".
+ *
+ * @param { string } key - The header key to normalize.
+ * @returns { string } The normalized header key.
+ */
 function normalizeHeaderKey(key: string): string {
     return key
         .split('-')
@@ -8,6 +15,12 @@ function normalizeHeaderKey(key: string): string {
         .join('-');
 }
 
+/**
+ * Normalizes the keys of a headers object to standard HTTP header capitalization.
+ *
+ * @param { Record<string, string> | undefined } headers - The headers to normalize.
+ * @returns { Record<string, string> | undefined } A new headers object with normalized keys, or undefined if input is undefined.
+ */
 function normalizeHeaders(
     headers: Record<string, string> | undefined,
 ): Record<string, string> | undefined {
@@ -19,6 +32,14 @@ function normalizeHeaders(
     );
 }
 
+/**
+ * Generates the final headers for a request by merging source and target options,
+ * applying conditional logic based on HTTP method, body type, and response format.
+ *
+ * @param { TchefOptions } src - The source options providing default headers.
+ * @param { TchefOptions } target - The target options that may override source headers and add new ones.
+ * @returns { Record<string, string> } The final headers object to be used in the request.
+ */
 // oxlint-disable-next-line max-statements
 export default function generateHeaders(
     src: TchefOptions,
