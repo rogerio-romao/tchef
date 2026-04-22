@@ -1,8 +1,28 @@
-import type { BaseSchema } from 'valibot';
-
 type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 type ResponseFormat = 'json' | 'text' | 'blob';
+
+interface StandardSchemaIssue {
+    readonly message: string;
+    readonly path?: readonly (PropertyKey | { readonly key: PropertyKey })[];
+}
+
+type StandardSchemaResult<Output> =
+    | { readonly value: Output; readonly issues?: undefined }
+    | { readonly issues: readonly StandardSchemaIssue[] };
+
+interface StandardSchemaV1<Input = unknown, Output = Input> {
+    readonly '~standard': {
+        readonly version: 1;
+        readonly vendor: string;
+        readonly validate: (
+            value: unknown,
+        ) => StandardSchemaResult<Output> | Promise<StandardSchemaResult<Output>>;
+        readonly types?: { readonly input: Input; readonly output: Output };
+    };
+}
+
+type InferOutput<S extends StandardSchemaV1> = NonNullable<S['~standard']['types']>['output'];
 
 /**
  * Options for the Tchef function
@@ -18,9 +38,10 @@ type ResponseFormat = 'json' | 'text' | 'blob';
  * @param signal - Abort signal to cancel the request
  * @param retries - Number of retries to do in case of failure (default: 0)
  * @param retryDelayMs - Delay in milliseconds between retries (default: 100), can be 'exponential' to increase the delay exponentially with each retry starting from 1 second
- * @param validateSchema - Valibot Schema to validate the response data
+ * @param validateSchema - Standard Schema–compliant schema (valibot, zod, arktype, etc.) used to validate the response data
+ * @param retryOnValidationFail - If true, a schema validation failure triggers the retry loop (when `retries > 0`). Defaults to `false`, since validation failures are usually deterministic.
  */
-interface TchefOptions {
+interface TchefOptions<S extends StandardSchemaV1 | undefined = undefined> {
     method?: HTTPVerb;
     body?: string;
     headers?: Record<string, string>;
@@ -32,7 +53,8 @@ interface TchefOptions {
     signal?: AbortSignal;
     retries?: number;
     retryDelayMs?: number | 'exponential';
-    validateSchema?: BaseSchema;
+    validateSchema?: S;
+    retryOnValidationFail?: boolean;
 }
 
 /**
@@ -48,4 +70,12 @@ interface TchefOptions {
  */
 type TchefResult<T> = { ok: true; data: T } | { ok: false; error: string; statusCode: number };
 
-export type { HTTPVerb, ResponseFormat, TchefOptions, TchefResult };
+export type {
+    HTTPVerb,
+    InferOutput,
+    ResponseFormat,
+    StandardSchemaIssue,
+    StandardSchemaV1,
+    TchefOptions,
+    TchefResult,
+};
