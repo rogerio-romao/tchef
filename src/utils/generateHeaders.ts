@@ -40,7 +40,13 @@ export default function generateHeaders(
     }
 
     if (target.method && target.method !== 'GET') {
-        if (
+        if (target.body instanceof FormData) {
+            // Let fetch set Content-Type with the correct multipart boundary automatically.
+            // Strip any user-provided Content-Type to prevent a boundary-less header breaking the request.
+            if (normalizedTargetHeaders) {
+                delete normalizedTargetHeaders['Content-Type'];
+            }
+        } else if (
             normalizedTargetHeaders?.['Content-Type'] === undefined &&
             normalizedSrcHeaders?.['Content-Type'] === undefined
         ) {

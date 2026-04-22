@@ -40,7 +40,9 @@
         "oxc/no-optional-chaining": "off",
         "oxc/no-rest-spread-properties": "off",
         "unicorn/filename-case": ["warn", { "case": "camelCase" }],
-        "unicorn/no-null": "off"
+        "unicorn/no-null": "off",
+        "vitest/prefer-lowercase-title": "off",
+        "vitest/prefer-to-be-truthy": "off"
     },
     "settings": {
         "jsdoc": {

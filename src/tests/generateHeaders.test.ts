@@ -238,4 +238,33 @@ describe('generate headers helper function', () => {
             Accept: 'application/json',
         });
     });
+
+    it('does not set Content-Type when body is FormData', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            body: new FormData(),
+            method: 'POST',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result['Content-Type']).toBeUndefined();
+    });
+
+    it('strips user-provided Content-Type when body is FormData', () => {
+        const defaultOptions: TchefOptions = {};
+
+        const options: TchefOptions = {
+            body: new FormData(),
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            method: 'POST',
+        };
+
+        const result = generateHeaders(defaultOptions, options);
+
+        expect(result['Content-Type']).toBeUndefined();
+    });
 });

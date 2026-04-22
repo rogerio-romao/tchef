@@ -18,7 +18,7 @@ import tchef from '@/index.ts';
 // oxlint-disable-next-line node/no-process-env
 const isCi = process.env.CI === 'true';
 
-describe('uRL based tests', () => {
+describe('URL based tests', () => {
     it('does not crash on invalid url', async () => {
         await expect(tchef('gibberish')).resolves.toStrictEqual({
             error: 'Invalid URL',
@@ -573,5 +573,54 @@ describe('validation tests', () => {
         } else {
             throw new Error('Should have failed validation');
         }
+    });
+});
+
+describe('formData tests', () => {
+    test.skipIf(isCi)('sends a FormData POST request', async () => {
+        const formData = new FormData();
+        formData.append('name', 'tchef');
+
+        const result = await tchef<{ form: { name: string } }>('https://httpbin.org/post', {
+            body: formData,
+            method: 'POST',
+        });
+
+        if (!result.ok) {
+            throw new Error(result.error);
+        }
+
+        expect(result.data.form.name).toBe('tchef');
+    });
+
+    test.skipIf(isCi)(
+        'sends a FormData POST request even when user passes Content-Type',
+        async () => {
+            const formData = new FormData();
+            formData.append('name', 'tchef');
+
+            const result = await tchef<{ form: { name: string } }>('https://httpbin.org/post', {
+                body: formData,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                method: 'POST',
+            });
+
+            if (!result.ok) {
+                throw new Error(result.error);
+            }
+
+            expect(result.data.form.name).toBe('tchef');
+        },
+    );
+
+    it('silently drops FormData body on GET request', async () => {
+        const formData = new FormData();
+        formData.append('name', 'tchef');
+
+        const result = await tchef('https://jsonplaceholder.typicode.com/todos/1', {
+            body: formData,
+        });
+
+        expect(result.ok).toBe(true);
     });
 });
